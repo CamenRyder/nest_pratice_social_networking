@@ -16,7 +16,6 @@ import { UserService } from './user.service';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { MyJwtGuard } from '../auth/guard/myjwt.guard';
-import { User } from '@prisma/client';
 import {
   FileUploadDto,
   ForgotPasswordDTO,
@@ -60,11 +59,6 @@ export class UserController {
   forgotPassword(@Body() body: ForgotPasswordDTO) {
     return this.userService.forgotPassword(body);
   }
-
-  // @Put('updateUserInfor/:user_id')
-  // updateUser(@Body() body: UpdateUserInforDTO, @Param('user_id') id: string) {
-  //   return this.userService.updateUserInfor(body, parseInt(id));
-  // }
 
   @ApiConsumes('multipart/form-data')
   @ApiBody({

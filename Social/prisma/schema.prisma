@@ -48,8 +48,8 @@ model InvoiceDetail {
   buy_price         Float?
   amount            Float?
   total             Float?
-  Dish              Dish?    @relation(fields: [dish_id], references: [dish_id], onDelete: NoAction, onUpdate: NoAction, map: "InvoiceDetail_ibfk_1")
-  Invoice           Invoice? @relation(fields: [invoice_id], references: [invoice_id], onDelete: NoAction, onUpdate: NoAction, map: "InvoiceDetail_ibfk_2")
+  Dish              Dish?    @relation(fields: [dish_id], references: [dish_id], onDelete: Restrict, onUpdate: Restrict, map: "InvoiceDetail_ibfk_1")
+  Invoice           Invoice? @relation(fields: [invoice_id], references: [invoice_id], onDelete: Restrict, onUpdate: Restrict, map: "InvoiceDetail_ibfk_2")
 
   @@index([dish_id], map: "dish_id")
   @@index([invoice_id], map: "invoice_id")
@@ -100,7 +100,7 @@ model PostImage {
   url_image        String? @db.Text
   post_id          Int?
   post_image_state String? @db.VarChar(100)
-  Post             Post?   @relation(fields: [post_id], references: [post_id], onDelete: NoAction, onUpdate: NoAction, map: "PostImage_ibfk_1")
+  Post             Post?   @relation(fields: [post_id], references: [post_id], onDelete: Restrict, onUpdate: Restrict, map: "PostImage_ibfk_1")
 
   @@index([post_id], map: "post_id")
 }
@@ -116,8 +116,8 @@ model Rating {
   user_id Int?
   post_id Int?
   rate    Int?
-  User    User? @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "Rating_ibfk_1")
-  Post    Post? @relation(fields: [post_id], references: [post_id], onDelete: NoAction, onUpdate: NoAction, map: "Rating_ibfk_2")
+  User    User? @relation(fields: [user_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict, map: "Rating_ibfk_1")
+  Post    Post? @relation(fields: [post_id], references: [post_id], onDelete: Restrict, onUpdate: Restrict, map: "Rating_ibfk_2")
 
   @@index([post_id], map: "post_id")
   @@index([user_id], map: "user_id")
@@ -128,8 +128,8 @@ model ReactPost {
   post_id       Int?
   user_id       Int?
   like_state    Int
-  Post          Post? @relation(fields: [post_id], references: [post_id], onUpdate: NoAction, map: "ReactPost_ibfk_1")
-  User          User? @relation(fields: [user_id], references: [user_id], onUpdate: NoAction, map: "ReactPost_ibfk_2")
+  Post          Post? @relation(fields: [post_id], references: [post_id], onUpdate: Restrict, map: "ReactPost_ibfk_1")
+  User          User? @relation(fields: [user_id], references: [user_id], onUpdate: Restrict, map: "ReactPost_ibfk_2")
 
   @@index([post_id], map: "post_id")
   @@index([user_id], map: "user_id")
@@ -140,9 +140,9 @@ model Report {
   user_id   Int?
   post_id   Int?
   issue_id  Int?
-  User      User?   @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "Report_ibfk_1")
-  Post      Post?   @relation(fields: [post_id], references: [post_id], onDelete: NoAction, onUpdate: NoAction, map: "Report_ibfk_2")
-  Issues    Issues? @relation(fields: [issue_id], references: [issue_id], onDelete: NoAction, onUpdate: NoAction, map: "Report_ibfk_3")
+  User      User?   @relation(fields: [user_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict, map: "Report_ibfk_1")
+  Post      Post?   @relation(fields: [post_id], references: [post_id], onDelete: Restrict, onUpdate: Restrict, map: "Report_ibfk_2")
+  Issues    Issues? @relation(fields: [issue_id], references: [issue_id], onDelete: Restrict, onUpdate: Restrict, map: "Report_ibfk_3")
 
   @@index([issue_id], map: "issue_id")
   @@index([post_id], map: "post_id")
@@ -157,7 +157,7 @@ model Role {
 
 model User {
   user_id                                   Int            @id @default(autoincrement())
-  email                                     String?        @db.VarChar(400)
+  email                                     String        @db.VarChar(400)
   hash_password                             String?        @db.VarChar(400)
   fullname                                  String?        @db.VarChar(400)
   gender                                    Int?           @default(0)
@@ -173,7 +173,7 @@ model User {
   Rating                                    Rating[]
   ReactPost                                 ReactPost[]
   Report                                    Report[]
-  Role                                      Role?          @relation(fields: [role_id], references: [role_id], onDelete: NoAction, onUpdate: NoAction, map: "User_ibfk_1")
+  Role                                      Role?          @relation(fields: [role_id], references: [role_id], onDelete: Restrict, onUpdate: Restrict, map: "User_ibfk_1")
 
   @@index([role_id], map: "role_id")
 }

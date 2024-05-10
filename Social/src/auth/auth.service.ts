@@ -15,6 +15,14 @@ export class AuthService {
 
   async register(registerDTO: RegisterDTO): Promise<any> {
     try {
+      const haveData = await this.prismaService.user.findFirst({
+        where: {
+          email: registerDTO.email,
+        },
+      });
+      if (haveData) {
+        throw new ForbiddenException('Email has signed up');
+      }
       const hasedPassword = await argon.hash(registerDTO.password);
       const user = await this.prismaService.user.create({
         data: {
@@ -22,16 +30,17 @@ export class AuthService {
           hash_password: hasedPassword,
           fullname: registerDTO.fullname,
         },
-        select: { user_id: true, email: true, hash_password: true },
+        select: { user_id: true, email: true, hash_password: false },
       });
-      return user;
+      return {
+        data: user,
+        message: 'Sign up success',
+      };
     } catch (error) {
       if (error.code == 'P2002') {
         throw new ForbiddenException('Error in credentials');
-      } else
-        return {
-          error: error,
-        };
+      }
+      return error;
     }
   }
 

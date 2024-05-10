@@ -1,5 +1,6 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+const fs = require('fs');
 import {
   ForgotPasswordDTO,
   UpdatePasswordDTO,
@@ -87,9 +88,18 @@ export class UserService {
         user_id: Number(userId),
       },
     });
-    const url1 = 'http://localhost:8888/public/img/' + imgName;
-    // const url2 = 'http://camenryder.xyz/public/img/' + imgName;
-    user.url_avatar = url1;
+    const substringToRemove = 'http://camenryder.xyz/';
+    // const url1 = 'http://localhost:8888/public/img/' + imgName;
+    const url2 = 'http://camenryder.xyz/public/img/' + imgName;
+    if (user.url_avatar != null) {
+      const filePath = user.url_avatar.replace(substringToRemove, '');
+      fs.unlink(filePath, (err) => {
+        if (err) {
+          throw new ForbiddenException('Old file avatar couldnt delete');
+        }
+      });
+    }
+    user.url_avatar = url2;
     await this.prismaService.user.update({
       data: user,
       where: {
