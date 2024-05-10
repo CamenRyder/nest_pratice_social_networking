@@ -87,8 +87,9 @@ export class UserService {
         user_id: Number(userId),
       },
     });
-
-    user.url_avatar = imgName;
+    const url1 = 'http://localhost:8888/public/img/' + imgName;
+    // const url2 = 'http://camenryder.xyz/public/img/' + imgName;
+    user.url_avatar = url1;
     await this.prismaService.user.update({
       data: user,
       where: {

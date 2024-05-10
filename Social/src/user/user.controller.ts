@@ -75,8 +75,9 @@ export class UserController {
     FileInterceptor('fileUpload', {
       storage: diskStorage({
         destination: process.cwd() + '/public/img',
-        filename: (req, file, callback) =>
-          callback(null, Date.now() + '_' + file.originalname),
+        filename: (req, file, callback) => {
+          return callback(null, Date.now() + '_' + file.originalname);
+        },
       }),
     }),
   )
