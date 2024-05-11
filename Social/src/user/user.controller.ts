@@ -60,6 +60,9 @@ export class UserController {
     return this.userService.forgotPassword(body);
   }
 
+
+  @ApiBearerAuth()
+  @UseGuards(MyJwtGuard)
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     description: 'upload avatar',
