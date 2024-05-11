@@ -29,6 +29,7 @@ export class AuthService {
           email: registerDTO.email,
           hash_password: hasedPassword,
           fullname: registerDTO.fullname,
+          role_id: 1,
         },
         select: { user_id: true, email: true, hash_password: false },
       });
@@ -48,6 +49,11 @@ export class AuthService {
     const user = await this.prismaService.user.findFirst({
       where: {
         email: loginDTO.email,
+      },
+      include: {
+        Post: true,
+        Follower_Follower_user_idToUser: true,
+        Follower_Follower_user_follow_er_idToUser: true,
       },
     });
     if (!user) {

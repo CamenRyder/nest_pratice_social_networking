@@ -4,7 +4,9 @@ import {
   Controller,
   Get,
   HttpException,
+  HttpStatus,
   Param,
+  ParseFilePipeBuilder,
   Post,
   Put,
   Req,
@@ -81,7 +83,17 @@ export class UserController {
   @Post('/upload-avatar/:user_id')
   uploadAva(
     @Param('user_id') userId: string,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile(
+      new ParseFilePipeBuilder()
+        .addFileTypeValidator({ fileType: '.(png|jpeg|jpg)' })
+        .addMaxSizeValidator({
+          maxSize: 2000,
+          message:
+            'Nếu hiện chữ này báo ngay cho Hiếu. Có thể file này up lên hơi lớn?',
+        })
+        .build({ errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY }),
+    )
+    file: Express.Multer.File,
   ) {
     try {
       return this.userService.saveAvatar(userId, file.filename);

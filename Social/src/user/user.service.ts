@@ -1,6 +1,6 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-const fs = require('fs');
+import fs from 'fs';
 import {
   ForgotPasswordDTO,
   UpdatePasswordDTO,
