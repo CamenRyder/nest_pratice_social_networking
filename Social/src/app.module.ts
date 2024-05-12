@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { PostModule } from './post/post.module';
 @Module({
   imports: [
     PrismaModule,
@@ -12,6 +13,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
     UserModule,
     AuthModule,
     ServeStaticModule.forRoot({ rootPath: '.' }),
+    PostModule,
   ],
 })
 export class AppModule {}

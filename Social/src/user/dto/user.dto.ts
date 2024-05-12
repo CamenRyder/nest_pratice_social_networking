@@ -68,3 +68,5 @@ export class FileUploadDto {
   @ApiProperty({ type: 'string', format: 'binary' })
   fileUpload: any;
 }
+
+

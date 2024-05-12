@@ -2,10 +2,13 @@
 import {
   Body,
   Controller,
+  FileTypeValidator,
   Get,
   HttpException,
   HttpStatus,
+  MaxFileSizeValidator,
   Param,
+  ParseFilePipe,
   ParseFilePipeBuilder,
   Post,
   Put,
@@ -62,7 +65,6 @@ export class UserController {
     return this.userService.forgotPassword(body);
   }
 
-
   @ApiBearerAuth()
   @UseGuards(MyJwtGuard)
   @ApiConsumes('multipart/form-data')
@@ -75,6 +77,7 @@ export class UserController {
       storage: diskStorage({
         destination: process.cwd() + '/public/img',
         filename: (req, file, callback) => {
+          file.size;
           return callback(null, Date.now() + '_' + file.originalname);
         },
       }),
@@ -87,11 +90,11 @@ export class UserController {
       new ParseFilePipeBuilder()
         .addFileTypeValidator({ fileType: '.(png|jpeg|jpg)' })
         .addMaxSizeValidator({
-          maxSize: 2000,
-          message:
-            'Nếu hiện chữ này báo ngay cho Hiếu. Có thể file này up lên hơi lớn?',
+          maxSize: 20000000,
+          // message:
+          //   'Nếu hiện chữ này báo ngay cho Hiếu. Có thể file này up lên hơi lớn?',
         })
-        .build({ errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY }),
+        .build({ errorHttpStatusCode: HttpStatus.BAD_REQUEST }),
     )
     file: Express.Multer.File,
   ) {

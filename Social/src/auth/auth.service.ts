@@ -31,7 +31,12 @@ export class AuthService {
           fullname: registerDTO.fullname,
           role_id: 1,
         },
-        select: { user_id: true, email: true, hash_password: false },
+        // select: { user_id: true, email: true, hash_password: false },
+        include: {
+          Post: true,
+          Follower_Follower_user_follow_er_idToUser: true,
+          Follower_Follower_user_idToUser: true,
+        },
       });
       return {
         data: user,

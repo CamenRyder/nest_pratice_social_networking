@@ -100,7 +100,7 @@ model PostImage {
   url_image        String? @db.Text
   post_id          Int?
   post_image_state String? @db.VarChar(100)
-  Post             Post?   @relation(fields: [post_id], references: [post_id], onDelete: Restrict, onUpdate: Restrict, map: "PostImage_ibfk_1")
+  Post             Post?   @relation(fields: [post_id], references: [post_id], onDelete: SetNull, onUpdate: SetNull, map: "PostImage_ibfk_1")
 
   @@index([post_id], map: "post_id")
 }
@@ -163,7 +163,7 @@ model User {
   gender                                    Int?           @default(0)
   country                                   String?        @db.VarChar(400)
   language                                  String?        @db.VarChar(400)
-  url_avatar                                String?        @default("https://avatar.iran.liara.run/public/boy?username=Ash") @db.VarChar(400)
+  url_avatar                                String?        @default("http://camenryder.xyz/public/img/avatar_default.png") @db.VarChar(400)
   role_id                                   Int?
   Follower_Follower_user_idToUser           Follower[]     @relation("Follower_user_idToUser")
   Follower_Follower_user_follow_er_idToUser Follower[]     @relation("Follower_user_follow_er_idToUser")
