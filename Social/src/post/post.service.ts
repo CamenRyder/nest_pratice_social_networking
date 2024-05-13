@@ -1,6 +1,7 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { DeletePostUserDTO } from './dto/post.dto';
+import { skip, take } from 'rxjs';
 const fs = require('fs');
 
 @Injectable()
@@ -162,5 +163,40 @@ export class PostService {
         post_id: null,
       },
     });
+  }
+
+  async getPostAllUser(page: number, pageSize: number) {
+    try {
+      var currentTime = new Date();
+      const offset = (page - 1) * 10;
+      const data = await this.prismaService.post.findMany({
+        take: pageSize,
+        skip: offset,
+        orderBy: {
+          date_create_post: 'desc',
+        },
+        include: {
+          User: true,
+          PostImage: true,
+        },
+      });
+      data.forEach((element) => {
+        element.date_create_post = new Date(
+          Number(element.date_create_post),
+        ).toUTCString();
+      });
+      return {
+        message: 'Update successful',
+        statusCode: 200,
+        createAt: currentTime.toUTCString(),
+        data: {
+          data,
+        },
+      };
+    } catch (error) {
+      return {
+        messageError: error,
+      };
+    }
   }
 }

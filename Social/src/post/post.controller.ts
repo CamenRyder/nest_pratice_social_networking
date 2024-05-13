@@ -2,12 +2,14 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   HttpException,
   HttpStatus,
   Param,
   ParseFilePipeBuilder,
   Post,
   Put,
+  Query,
   Req,
   Request,
   UploadedFile,
@@ -27,6 +29,7 @@ import { CreatePostUserDTO, DeletePostUserDTO } from './dto/post.dto';
 import { diskStorage } from 'multer';
 import { TransformationType } from 'class-transformer';
 import { MyJwtGuard } from 'src/auth/guard/myjwt.guard';
+import { get } from 'http';
 
 @ApiTags('Post User')
 @Controller('post')
@@ -143,13 +146,28 @@ export class PostController {
 
   @ApiBearerAuth()
   @UseGuards(MyJwtGuard)
-  @Delete('/delete-post/:user_id')
+  @Delete('delete-post/:user_id')
   deleteYourPost(@Body() body: DeletePostUserDTO) {
     try {
       return this.postService.deletePost(body);
     } catch (err) {
       throw new HttpException(
         `Lỗi BE {deleteYourPost - postController} ${err}`,
+        500,
+      );
+    }
+  }
+
+  @Get('getPostAllUser/')
+  getPostsAllUser(
+    @Query('pageSize') pageSize: string,
+    @Query('page') page: string,
+  ) {
+    try {
+      return this.postService.getPostAllUser(Number(page), Number(pageSize));
+    } catch (error) {
+      throw new HttpException(
+        `Lỗi BE {deleteYourPost - getPostAllUser} ${error}`,
         500,
       );
     }
