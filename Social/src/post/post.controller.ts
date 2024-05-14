@@ -18,14 +18,18 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { PostService } from './post.service';
-import {
-  AnyFilesInterceptor,
-  FileInterceptor,
-  FilesInterceptor,
-} from '@nestjs/platform-express/multer';
+import { FileInterceptor } from '@nestjs/platform-express/multer';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { FileUploadDto } from 'src/user/dto/user.dto';
-import { CreatePostUserDTO, DeletePostUserDTO } from './dto/post.dto';
+import {
+  ChangeReactPostDTO,
+  CreatePostUserDTO,
+  DeletePostUserDTO,
+  PostFromUserDTO,
+  ReactPostDTO,
+  RemoveReactPostDTO,
+  ReportPostDTO,
+} from './dto/post.dto';
 import { diskStorage } from 'multer';
 import { TransformationType } from 'class-transformer';
 import { MyJwtGuard } from 'src/auth/guard/myjwt.guard';
@@ -36,9 +40,33 @@ import { get } from 'http';
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
-  getNewPosts() {}
-
-  getYourPosts() {}
+  @Get('getPostAllUser/')
+  getPostsAllUser(
+    @Query('pageSize') pageSize: string,
+    @Query('page') page: string,
+  ) {
+    try {
+      return this.postService.getPostAllUser(Number(page), Number(pageSize));
+    } catch (error) {
+      throw new HttpException(
+        `Lỗi BE {deleteYourPost - getPostAllUser} ${error}`,
+        500,
+      );
+    }
+  }
+  @ApiBearerAuth()
+  @UseGuards(MyJwtGuard)
+  @Post('getPostFromUser/:user_id')
+  getPostsFromUser(@Body() data: PostFromUserDTO) {
+    try {
+      return this.postService.getPostFromUser(data);
+    } catch (error) {
+      throw new HttpException(
+        `Lỗi BE {deleteYourPost - getPostFromUser} ${error}`,
+        500,
+      );
+    }
+  }
 
   @ApiBearerAuth()
   @UseGuards(MyJwtGuard)
@@ -158,16 +186,57 @@ export class PostController {
     }
   }
 
-  @Get('getPostAllUser/')
-  getPostsAllUser(
-    @Query('pageSize') pageSize: string,
-    @Query('page') page: string,
-  ) {
+  @ApiBearerAuth()
+  @UseGuards(MyJwtGuard)
+  @Post('reactPost')
+  reactPost(@Body() body: ReactPostDTO) {
     try {
-      return this.postService.getPostAllUser(Number(page), Number(pageSize));
-    } catch (error) {
+      return this.postService.reactPost(body);
+    } catch (err) {
       throw new HttpException(
-        `Lỗi BE {deleteYourPost - getPostAllUser} ${error}`,
+        `Lỗi BE {deleteYourPost - postController} ${err}`,
+        500,
+      );
+    }
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(MyJwtGuard)
+  @Post('changeReactPost')
+  changeReactPost(@Body() body: ChangeReactPostDTO) {
+    try {
+      return this.postService.changeReactPost(body);
+    } catch (err) {
+      throw new HttpException(
+        `Lỗi BE {deleteYourPost - postController} ${err}`,
+        500,
+      );
+    }
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(MyJwtGuard)
+  @Delete('removeReactedPost')
+  removeReactedPost(@Body() body: RemoveReactPostDTO) {
+    try {
+      return this.postService.removeReactPost(body);
+    } catch (err) {
+      throw new HttpException(
+        `Lỗi BE {deleteYourPost - postController} ${err}`,
+        500,
+      );
+    }
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(MyJwtGuard)
+  @Post('reportPost')
+  reportPost(@Body() body: ReportPostDTO) {
+    try {
+      return this.postService.reportPost(body);
+    } catch (err) {
+      throw new HttpException(
+        `Lỗi BE {deleteYourPost - postController} ${err}`,
         500,
       );
     }

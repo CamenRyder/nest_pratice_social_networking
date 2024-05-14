@@ -1,6 +1,13 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { DeletePostUserDTO } from './dto/post.dto';
+import {
+  ChangeReactPostDTO,
+  DeletePostUserDTO,
+  PostFromUserDTO,
+  ReactPostDTO,
+  RemoveReactPostDTO,
+  ReportPostDTO,
+} from './dto/post.dto';
 import { skip, take } from 'rxjs';
 const fs = require('fs');
 
@@ -36,7 +43,10 @@ export class PostService {
         return {
           message: 'Create successful',
           statusCode: 200,
-          createAt: currentTime.toUTCString(),
+          createAt: currentTime.toLocaleString('en-US', {
+            timeZone: 'Asia/Ho_Chi_Minh',
+            hour12: false,
+          }),
           data: {
             postCreated,
             imageCreate,
@@ -46,7 +56,10 @@ export class PostService {
         return {
           message: 'Create successful',
           statusCode: 200,
-          createAt: currentTime.toUTCString(),
+          createAt: currentTime.toLocaleString('en-US', {
+            timeZone: 'Asia/Ho_Chi_Minh',
+            hour12: false,
+          }),
           data: {
             postCreated,
           },
@@ -71,7 +84,10 @@ export class PostService {
         return {
           message: 'Delete successful',
           statusCode: 200,
-          createAt: new Date().toUTCString(),
+          createAt: new Date().toLocaleString('en-US', {
+            timeZone: 'Asia/Ho_Chi_Minh',
+            hour12: false,
+          }),
           data: {
             isDelete,
           },
@@ -121,7 +137,10 @@ export class PostService {
         return {
           message: 'Update successful',
           statusCode: 200,
-          createAt: currentTime.toUTCString(),
+          createAt: currentTime.toLocaleString('en-US', {
+            timeZone: 'Asia/Ho_Chi_Minh',
+            hour12: false,
+          }),
           data: {
             dataUpdated,
             imageCreate,
@@ -131,7 +150,10 @@ export class PostService {
         return {
           message: 'Update successful',
           statusCode: 200,
-          createAt: currentTime.toUTCString(),
+          createAt: currentTime.toLocaleString('en-US', {
+            timeZone: 'Asia/Ho_Chi_Minh',
+            hour12: false,
+          }),
           data: {
             dataUpdated,
           },
@@ -165,6 +187,199 @@ export class PostService {
     });
   }
 
+  async getPostFromUser(PostFormUserDTO: PostFromUserDTO) {
+    try {
+      var currentTime = new Date();
+      console.log(PostFormUserDTO);
+      const offset = (PostFormUserDTO.page - 1) * 10;
+      const data = await this.prismaService.post.findMany({
+        take: PostFormUserDTO.page_size,
+        skip: offset,
+        orderBy: {
+          date_create_post: 'desc',
+        },
+        where: {
+          user_id: PostFormUserDTO.user_id,
+        },
+        include: {
+          User: true,
+          PostImage: true,
+        },
+      });
+      data.forEach((element) => {
+        element.date_create_post = new Date(
+          Number(element.date_create_post),
+        ).toUTCString();
+      });
+      return {
+        message: 'Update successful',
+        statusCode: 200,
+        createAt: currentTime.toLocaleString('en-US', {
+          timeZone: 'Asia/Ho_Chi_Minh',
+          hour12: false,
+        }),
+        data: {
+          data,
+        },
+      };
+    } catch (err) {
+      return {
+        message: err,
+      };
+    }
+  }
+
+  async reactPost(data: ReactPostDTO) {
+    try {
+      var currentTime = new Date();
+      if (data.like_state < 0 || data.like_state > 5) data.like_state = 1;
+      const dataQuery = await this.prismaService.reactPost.create({
+        data: {
+          post_id: data.post_id,
+          user_id: data.user_id,
+          like_state: data.like_state,
+        },
+        include: {
+          Post: true,
+          User: true,
+        },
+      });
+      return {
+        message: 'React post successful',
+        statusCode: 200,
+        createAt: currentTime.toLocaleString('en-US', {
+          timeZone: 'Asia/Ho_Chi_Minh',
+          hour12: false,
+        }),
+        data: {
+          dataQuery,
+        },
+      };
+    } catch (err) {
+      return {
+        message: err,
+      };
+    }
+  }
+
+  async removeReactPost(data: RemoveReactPostDTO) {
+    try {
+      var currentTime = new Date();
+      const dataQuery = this.prismaService.reactPost.findFirst({
+        where: { post_id: data.post_id, user_id: data.user_id },
+      });
+      if (dataQuery == null)
+        throw new ForbiddenException('Not found data {removeReactPost}');
+      const isDelete = this.prismaService.reactPost.delete({
+        where: {
+          react_post_id: (await dataQuery).react_post_id,
+        },
+      });
+      return {
+        message: 'Delete react post successful',
+        statusCode: 200,
+        createAt: currentTime.toLocaleString('en-US', {
+          timeZone: 'Asia/Ho_Chi_Minh',
+          hour12: false,
+        }),
+        data: {
+          isDelete,
+        },
+      };
+    } catch (err) {
+      return {
+        message: err,
+      };
+    }
+  }
+  async changeReactPost(data: ChangeReactPostDTO) {
+    try {
+      var currentTime = new Date();
+      if (data.like_state < 1 || data.like_state > 5) data.like_state = 1;
+      const dataQuery = await this.prismaService.reactPost.findFirst({
+        where: {
+          post_id: data.post_id,
+          user_id: data.user_id,
+        },
+      });
+      if (!dataQuery)
+        throw new ForbiddenException(
+          'data not found, check your body request {changeReactPost}',
+        );
+      const dataUpdate = await this.prismaService.reactPost.update({
+        where: {
+          react_post_id: dataQuery.react_post_id,
+        },
+        data: dataQuery,
+        include: {
+          Post: true,
+          User: true,
+        },
+      });
+      return {
+        message: 'React post successful',
+        statusCode: 200,
+        createAt: currentTime.toLocaleString('en-US', {
+          timeZone: 'Asia/Ho_Chi_Minh',
+          hour12: false,
+        }),
+        data: {
+          dataUpdate,
+        },
+      };
+    } catch (err) {
+      return {
+        message: err,
+      };
+    }
+  }
+
+  async reportPost(data: ReportPostDTO) {
+    try {
+      var currentTime = new Date();
+      var noeww = Date.now();
+      const totalReported = await this.prismaService.report.findMany({
+        where: {
+          user_id: data.user_id,
+          post_id: data.post_id,
+        },
+      });
+      if (totalReported.length > 4)
+        throw new ForbiddenException('Your limit 5 report!');
+      const isReported = await this.prismaService.report.findFirst({
+        where: {
+          user_id: data.user_id,
+          post_id: data.post_id,
+          issue_id: data.issue_id,
+        },
+      });
+      if (isReported) throw new ForbiddenException('User reported this issue!');
+      const dataQuery = await this.prismaService.report.create({
+        data: {
+          user_id: data.user_id,
+          post_id: data.post_id,
+          issue_id: data.issue_id,
+          dateReported: noeww.toString(),
+        },
+      });
+      return {
+        message: 'Report successful',
+        statusCode: 200,
+        createAt: currentTime.toLocaleString('en-US', {
+          timeZone: 'Asia/Ho_Chi_Minh',
+          hour12: false,
+        }),
+        data: {
+          dataQuery,
+        },
+      };
+    } catch (err) {
+      return {
+        messageError: err,
+      };
+    }
+  }
+
   async getPostAllUser(page: number, pageSize: number) {
     try {
       var currentTime = new Date();
@@ -183,12 +398,18 @@ export class PostService {
       data.forEach((element) => {
         element.date_create_post = new Date(
           Number(element.date_create_post),
-        ).toUTCString();
+        ).toLocaleString('en-US', {
+          timeZone: 'Asia/Ho_Chi_Minh',
+          hour12: false,
+        });
       });
       return {
         message: 'Update successful',
         statusCode: 200,
-        createAt: currentTime.toUTCString(),
+        createAt: currentTime.toLocaleString('en-US', {
+          timeZone: 'Asia/Ho_Chi_Minh',
+          hour12: false,
+        }),
         data: {
           data,
         },

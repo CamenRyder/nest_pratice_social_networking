@@ -140,6 +140,7 @@ model Report {
   user_id   Int?
   post_id   Int?
   issue_id  Int?
+  dateReported String @db.VarChar(200) 
   User      User?   @relation(fields: [user_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict, map: "Report_ibfk_1")
   Post      Post?   @relation(fields: [post_id], references: [post_id], onDelete: Restrict, onUpdate: Restrict, map: "Report_ibfk_2")
   Issues    Issues? @relation(fields: [issue_id], references: [issue_id], onDelete: Restrict, onUpdate: Restrict, map: "Report_ibfk_3")
