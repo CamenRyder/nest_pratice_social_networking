@@ -70,3 +70,7 @@ export class FileUploadDto {
 }
 
 
+export class SearchDTO {
+  @ApiProperty({ type: String  , description: 'Key là mấy cái như email , sđt , tên người dùng , tên quán ăn đều có thể search được' })
+  keyword: string;
+}

@@ -158,11 +158,15 @@ model Role {
 
 model User {
   user_id                                   Int            @id @default(autoincrement())
-  email                                     String        @db.VarChar(400)
+  email                                     String         @db.VarChar(400)
   hash_password                             String?        @db.VarChar(400)
   fullname                                  String?        @db.VarChar(400)
   gender                                    Int?           @default(0)
   country                                   String?        @db.VarChar(400)
+  diner_address                             String?        @db.VarChar(200)
+  diner_name                                String?        @db.VarChar(200)
+  diner_image                               String?        @db.VarChar(400)
+  phone                                     String?        @db.VarChar(400)
   language                                  String?        @db.VarChar(400)
   url_avatar                                String?        @default("http://camenryder.xyz/public/img/avatar_default.png") @db.VarChar(400)
   role_id                                   Int?

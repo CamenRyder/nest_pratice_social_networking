@@ -1,8 +1,9 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-const fs = require('fs')
+const fs = require('fs');
 import {
   ForgotPasswordDTO,
+  SearchDTO,
   UpdatePasswordDTO,
   UpdateUserInforDTO,
 } from './dto/user.dto';
@@ -10,6 +11,68 @@ import * as argon from 'argon2';
 
 @Injectable()
 export class UserService {
+  async searchUser(key: string) {
+    try {
+      const keyWord = key;
+
+      const queryTemplate = (field, keyWord) => {
+        return this.prismaService.user.findMany({
+          where: {
+            [field]: {
+              contains: keyWord,
+            },
+          },
+          select: {
+            user_id: true,
+            fullname: true,
+            email: true,
+            phone: true,
+            url_avatar: true,
+            diner_name: true,
+            diner_address: true,
+          },
+        });
+      };
+      const queries = [
+        queryTemplate('fullname', keyWord),
+        queryTemplate('email', keyWord),
+        queryTemplate('phone', keyWord),
+        queryTemplate('diner_address', keyWord),
+        queryTemplate('diner_name', keyWord),
+      ];
+      const results = await Promise.all(queries);
+      const combinedList = results[0].concat(
+        results[1],
+        results[2],
+        results[3],
+        results[4],
+      );
+      const uniqueList = combinedList.reduce((acc, current) => {
+        const isExist = acc.some((item) => item.user_id === current.user_id);
+        if (!isExist) {
+          acc.push(current);
+        }
+        return acc;
+      }, []);
+      return {
+        message: 'Create successful',
+        statusCode: 200,
+        createAt: new Date().toLocaleString('en-US', {
+          timeZone: 'Asia/Ho_Chi_Minh',
+          hour12: false,
+        }),
+        data: {
+          result: uniqueList,
+        },
+      };
+    } catch (error) {
+      return {
+        message: {
+          error,
+        },
+      };
+    }
+  }
   constructor(private prismaService: PrismaService) {}
 
   async updateUserInfor(data: UpdateUserInforDTO, id: number) {

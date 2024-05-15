@@ -2,70 +2,41 @@ import {
   Body,
   Controller,
   Delete,
-  Get,
   HttpException,
   HttpStatus,
   Param,
   ParseFilePipeBuilder,
   Post,
   Put,
-  Query,
-  Req,
-  Request,
   UploadedFile,
-  UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { PostService } from './post.service';
-import { FileInterceptor } from '@nestjs/platform-express/multer';
-import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiConsumes,
-  ApiParam,
-  ApiTags,
-} from '@nestjs/swagger';
-import { FileUploadDto } from 'src/user/dto/user.dto';
-import {
-  CreatePostUserDTO,
-  DeletePostUserDTO,
-  PostFromUserDTO,
-  ReportPostDTO,
-} from './dto/post.dto';
-import { diskStorage } from 'multer';
-import { TransformationType } from 'class-transformer';
+import { CommentService } from './comment.service';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { MyJwtGuard } from 'src/auth/guard/myjwt.guard';
-import { get } from 'http';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import {
+  AllCommentPostDTO,
+  CreateCommentUserDTO,
+  DeleteCommentPostDTO,
+} from './dto/comment.dto';
 
-@ApiTags('Post User')
-@Controller('post')
-export class PostController {
-  constructor(private readonly postService: PostService) {}
+@ApiTags('Comment Post')
+@Controller('comment')
+export class CommentController {
+  constructor(private readonly commentService: CommentService) {}
 
-  @Get('view-posts/')
-  getPostsAllUser(
-    @Query('pageSize') pageSize: string,
-    @Query('page') page: string,
-  ) {
-    try {
-      return this.postService.getPostAllUser(Number(page), Number(pageSize));
-    } catch (error) {
-      throw new HttpException(
-        `Lỗi BE {getPostAllUser - postController} ${error}`,
-        500,
-      );
-    }
-  }
   @ApiBearerAuth()
   @UseGuards(MyJwtGuard)
-  @Post('view-posts-user')
-  getPostsFromUser(@Body() data: PostFromUserDTO) {
+  @Post('view-comment-post')
+  getCommentFormPost(@Body() data: AllCommentPostDTO) {
     try {
-      return this.postService.getPostFromUser(data);
+      return this.commentService.getPostFromPost(data);
     } catch (error) {
       throw new HttpException(
-        `Lỗi BE {getPostsFromUser - postController]} ${error}`,
+        `Lỗi BE {deleteYourPost - getPostFromUser} ${error}`,
         500,
       );
     }
@@ -73,11 +44,11 @@ export class PostController {
 
   @ApiBearerAuth()
   @UseGuards(MyJwtGuard)
-  @Post('create-post/:user_id')
+  @Post('edit-comment/:user_id')
   @ApiConsumes('multipart/form-data')
   @ApiBody({
-    description: 'create post with content and image',
-    type: CreatePostUserDTO,
+    description: 'create comment with content and image',
+    type: CreateCommentUserDTO,
   })
   @UseInterceptors(
     FileInterceptor('fileUpload', {
@@ -92,9 +63,9 @@ export class PostController {
       }),
     }),
   )
-  createYourPost(
+  createComment(
     @Param('user_id') userId: string,
-    @Body() createDTO: CreatePostUserDTO,
+    @Body() createCommentDTO: CreateCommentUserDTO,
     @UploadedFile(
       new ParseFilePipeBuilder()
         .addFileTypeValidator({ fileType: '.(png|jpeg|jpg)' })
@@ -112,25 +83,28 @@ export class PostController {
   ) {
     try {
       if (file == null) {
-        return this.postService.createPost(userId, '', createDTO.description);
+        return this.commentService.createComment(userId, '', createCommentDTO);
       }
-      return this.postService.createPost(
+      return this.commentService.createComment(
         userId,
         file.filename,
-        createDTO.description,
+        createCommentDTO,
       );
     } catch (err) {
-      throw new HttpException('Lỗi BE {createYourPost - postController}', 500);
+      throw new HttpException(
+        'Lỗi BE {createComment - commentController}',
+        500,
+      );
     }
   }
 
   @ApiBearerAuth()
   @UseGuards(MyJwtGuard)
-  @Put('update-post/:user_id')
+  @Put('update-comment/:post_id')
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     description: 'create post with content and image',
-    type: CreatePostUserDTO,
+    type: CreateCommentUserDTO,
   })
   @UseInterceptors(
     FileInterceptor('fileUpload', {
@@ -145,9 +119,9 @@ export class PostController {
       }),
     }),
   )
-  updateYourPost(
+  updateComment(
     @Param('post_id') postId: string,
-    @Body() createDTO: CreatePostUserDTO,
+    @Body() createDTO: CreateCommentUserDTO,
     @UploadedFile(
       new ParseFilePipeBuilder()
         .addFileTypeValidator({ fileType: '.(png|jpeg|jpg)' })
@@ -163,27 +137,20 @@ export class PostController {
   ) {
     try {
       if (file == null) {
-        return this.postService.updatePost(postId, '', createDTO.description);
+        return this.commentService.updateComment(
+          postId,
+          '',
+          createDTO.description,
+        );
       }
-      return this.postService.updatePost(
+      return this.commentService.updateComment(
         postId,
         file.filename,
         createDTO.description,
       );
     } catch (err) {
-      throw new HttpException('Lỗi BE {createYourPost - postController}', 500);
-    }
-  }
-
-  @ApiBearerAuth()
-  @UseGuards(MyJwtGuard)
-  @Delete('delete-post')
-  deleteYourPost(@Body() body: DeletePostUserDTO) {
-    try {
-      return this.postService.deletePost(body);
-    } catch (err) {
       throw new HttpException(
-        `Lỗi BE {deleteYourPost - postController} ${err}`,
+        'Lỗi BE {updateComment - commentController}',
         500,
       );
     }
@@ -191,13 +158,13 @@ export class PostController {
 
   @ApiBearerAuth()
   @UseGuards(MyJwtGuard)
-  @Post('report-post')
-  reportPost(@Body() body: ReportPostDTO) {
+  @Delete('delete-comment')
+  deleteComment(@Body() body: DeleteCommentPostDTO) {
     try {
-      return this.postService.reportPost(body);
+      return this.commentService.deleteComment(body);
     } catch (err) {
       throw new HttpException(
-        `Lỗi BE {deleteYourPost - postController} ${err}`,
+        `Lỗi BE {deleteComment - commentController} ${err}`,
         500,
       );
     }

@@ -12,6 +12,7 @@ import {
   ParseFilePipeBuilder,
   Post,
   Put,
+  Query,
   Req,
   UploadedFile,
   UseGuards,
@@ -24,11 +25,12 @@ import { MyJwtGuard } from '../auth/guard/myjwt.guard';
 import {
   FileUploadDto,
   ForgotPasswordDTO,
+  SearchDTO,
   UpdatePasswordDTO,
   UpdateUserInforDTO,
 } from './dto/user.dto';
 import { diskStorage } from 'multer';
-import { ApiBearerAuth, ApiTags, ApiConsumes, ApiBody } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags, ApiConsumes, ApiBody, ApiQuery } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('User')
@@ -44,15 +46,24 @@ export class UserController {
     return data;
   }
 
-  // @UseGuards(MyJwtGuard)
-  @Put('updateUserInfor/:user_id')
+  @ApiBearerAuth()
+  @UseGuards(MyJwtGuard)
+  @Put('update-infor-user/:user_id')
   updateUser(@Body() body: UpdateUserInforDTO, @Param('user_id') id: string) {
     return this.userService.updateUserInfor(body, parseInt(id));
   }
 
   @ApiBearerAuth()
   @UseGuards(MyJwtGuard)
-  @Put('updatePassword/:user_id')
+  @Post('Search-User')
+  @ApiQuery({ name: 'key', description: 'Nhập chuỗi tìm kiếm, sẽ tìm kiếm các field tên người dùng, tên quán , địa chỉ , số điện thoại và email ' }) 
+  searchUser(@Query('key') page: string) {
+    return this.userService.searchUser(page);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(MyJwtGuard)
+  @Put('update-password/:user_id')
   updatePassword(
     @Body() body: UpdatePasswordDTO,
     @Param('user_id') id: string,
@@ -60,7 +71,7 @@ export class UserController {
     return this.userService.updatePassword(body, parseInt(id));
   }
 
-  @Post('forgotPassword')
+  @Post('forgot-password')
   forgotPassword(@Body() body: ForgotPasswordDTO) {
     return this.userService.forgotPassword(body);
   }
@@ -83,7 +94,7 @@ export class UserController {
       }),
     }),
   )
-  @Post('/upload-avatar/:user_id')
+  @Post('upload-avatar/:user_id')
   uploadAva(
     @Param('user_id') userId: string,
     @UploadedFile(

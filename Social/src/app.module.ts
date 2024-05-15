@@ -5,6 +5,8 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { PostModule } from './post/post.module';
+import { ReactPostModule } from './react-post/react-post.module';
+import { CommentModule } from './comment/comment.module';
 @Module({
   imports: [
     PrismaModule,
@@ -14,6 +16,8 @@ import { PostModule } from './post/post.module';
     AuthModule,
     ServeStaticModule.forRoot({ rootPath: '.' }),
     PostModule,
+    ReactPostModule,
+    CommentModule,
   ],
 })
 export class AppModule {}
