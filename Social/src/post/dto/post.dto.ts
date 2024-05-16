@@ -23,17 +23,17 @@ export class PostFromUserDTO {
   @ApiProperty({
     description: 'User id to instance object',
     type: Number,
-    default: 24,
+    default: 23,
   })
-  @IsString()
+  @IsNumber()
   user_id: number;
 
   @ApiProperty({ description: 'Quanity of size ', type: Number, default: 10 })
-  @IsString()
+  @IsNumber()
   page_size: number;
 
   @ApiProperty({ description: 'Your content update', type: Number, default: 1 })
-  @IsString()
+  @IsNumber()
   page: number;
 }
 

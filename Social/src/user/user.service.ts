@@ -11,6 +11,38 @@ import * as argon from 'argon2';
 
 @Injectable()
 export class UserService {
+  async userInfor(user_id: number) {
+
+    try {
+      var currentTime = new Date();
+      const data = await this.prismaService.user.findFirst({
+        where: {
+          user_id: user_id,
+        },
+        include: {
+          Post: {
+            include: {
+              PostImage: true,
+              ReactPost: true,
+            },
+          },
+        },
+      });
+      return {
+        message: 'Successful',
+        statusCode: 200,
+        createAt: currentTime.toLocaleString('en-US', {
+          timeZone: 'Asia/Ho_Chi_Minh',
+          hour12: false,
+        }),
+        data,
+      };
+    } catch (err) {
+      return {
+        messageError: err,
+      };
+    }
+  }
   async searchUser(key: string) {
     try {
       const keyWord = key;

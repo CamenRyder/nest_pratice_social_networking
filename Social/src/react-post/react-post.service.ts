@@ -22,7 +22,7 @@ export class ReactPostService {
         },
       });
       if (isReactPost) {
-        throw new ForbiddenException('');
+        throw new ForbiddenException('Ban da like bai viet roi');
       }
       const dataQuery = await this.prismaService.reactPost.create({
         data: {

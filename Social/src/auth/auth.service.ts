@@ -55,10 +55,13 @@ export class AuthService {
       where: {
         email: loginDTO.email,
       },
-      include: {
-        Post: true,
-        Follower_Follower_user_idToUser: true,
-        Follower_Follower_user_follow_er_idToUser: true,
+      select: {
+        user_id: true,
+        email: true,
+        fullname: true,
+        hash_password: true,
+        url_avatar: true,
+        phone: true,
       },
     });
     if (!user) {
@@ -88,7 +91,7 @@ export class AuthService {
       email,
     };
     return this.jwtService.signAsync(payload, {
-      expiresIn: '10m',
+      expiresIn: '2h',
       secret: this.configService.get('JWT_SECRET'),
     });
   }

@@ -21,6 +21,7 @@ import {
   AllCommentPostDTO,
   CreateCommentUserDTO,
   DeleteCommentPostDTO,
+  UpdateCommentUserDTO,
 } from './dto/comment.dto';
 
 @ApiTags('Comment Post')
@@ -44,7 +45,7 @@ export class CommentController {
 
   @ApiBearerAuth()
   @UseGuards(MyJwtGuard)
-  @Post('edit-comment/:user_id')
+  @Post('create-comment/:user_id')
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     description: 'create comment with content and image',
@@ -98,13 +99,71 @@ export class CommentController {
     }
   }
 
+  // @ApiBearerAuth()
+  // @UseGuards(MyJwtGuard)
+  // @Put('edit-comment/:post_id')
+  // @ApiConsumes('multipart/form-data')
+  // @ApiBody({
+  //   description: 'create post with content and image',
+  //   type: CreateCommentUserDTO,
+  // })
+  // @UseInterceptors(
+  //   FileInterceptor('fileUpload', {
+  //     storage: diskStorage({
+  //       destination: process.cwd() + '/public/img',
+  //       filename: (req, file, callback) => {
+  //         if (file == null) {
+  //           return callback(null, '');
+  //         }
+  //         return callback(null, Date.now() + '_' + file.originalname);
+  //       },
+  //     }),
+  //   }),
+  // )
+  // editComment(
+  //   @Param('post_id') postId: string,
+  //   @Body() createDTO: CreateCommentUserDTO,
+  //   @UploadedFile(
+  //     new ParseFilePipeBuilder()
+  //       .addFileTypeValidator({ fileType: '.(png|jpeg|jpg)' })
+  //       .addMaxSizeValidator({
+  //         maxSize: 20000000,
+  //       })
+  //       .build({
+  //         fileIsRequired: false,
+  //         errorHttpStatusCode: HttpStatus.BAD_REQUEST,
+  //       }),
+  //   )
+  //   file: Express.Multer.File,
+  // ) {
+  //   try {
+  //     if (file == null) {
+  //       return this.commentService.updateComment(
+  //         postId,
+  //         '',
+  //         createDTO.description,
+  //       );
+  //     }
+  //     return this.commentService.updateComment(
+  //       postId,
+  //       file.filename,
+  //       createDTO.description,
+  //     );
+  //   } catch (err) {
+  //     throw new HttpException(
+  //       'Lỗi BE {updateComment - commentController}',
+  //       500,
+  //     );
+  //   }
+  // }
+
   @ApiBearerAuth()
   @UseGuards(MyJwtGuard)
   @Put('update-comment/:post_id')
   @ApiConsumes('multipart/form-data')
   @ApiBody({
-    description: 'create post with content and image',
-    type: CreateCommentUserDTO,
+    description: 'update comment again with content and image',
+    type: UpdateCommentUserDTO,
   })
   @UseInterceptors(
     FileInterceptor('fileUpload', {
@@ -121,7 +180,7 @@ export class CommentController {
   )
   updateComment(
     @Param('post_id') postId: string,
-    @Body() createDTO: CreateCommentUserDTO,
+    @Body() updateDTO: UpdateCommentUserDTO,
     @UploadedFile(
       new ParseFilePipeBuilder()
         .addFileTypeValidator({ fileType: '.(png|jpeg|jpg)' })
@@ -140,13 +199,13 @@ export class CommentController {
         return this.commentService.updateComment(
           postId,
           '',
-          createDTO.description,
+          updateDTO.description,
         );
       }
       return this.commentService.updateComment(
         postId,
         file.filename,
-        createDTO.description,
+        updateDTO.description,
       );
     } catch (err) {
       throw new HttpException(

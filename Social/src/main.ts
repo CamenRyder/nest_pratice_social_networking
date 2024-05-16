@@ -9,7 +9,7 @@ async function bootstrap() {
     .setTitle('Social Food API')
     .setDescription('dummy data authorization')
     .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'Token' })
-    .setVersion('1.0 demo')
+    .setVersion('2.0 demo')
     .build();
   app.enableCors();
   const document = SwaggerModule.createDocument(app, config);

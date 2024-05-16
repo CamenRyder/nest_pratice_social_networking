@@ -9,6 +9,18 @@ export class CreateCommentUserDTO {
   @ApiProperty({ description: 'Post instance of your comment', type: Number })
   @IsString()
   post_top_id: number;
+
+  @ApiProperty({ type: 'string', format: 'binary' })
+  fileUpload: any;
+}
+
+export class UpdateCommentUserDTO {
+  @ApiProperty({ description: 'Your content post', type: String })
+  @IsString()
+  description: string;
+
+  @ApiProperty({ type: 'string', format: 'binary' })
+  fileUpload: any;
 }
 
 // export class UpdatePostDTO {

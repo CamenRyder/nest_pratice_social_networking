@@ -30,7 +30,13 @@ import {
   UpdateUserInforDTO,
 } from './dto/user.dto';
 import { diskStorage } from 'multer';
-import { ApiBearerAuth, ApiTags, ApiConsumes, ApiBody, ApiQuery } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiTags,
+  ApiConsumes,
+  ApiBody,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('User')
@@ -43,7 +49,8 @@ export class UserController {
   @Get('me')
   me(@Req() req: Request) {
     const data = req['user'];
-    return data;
+    // return data;
+    return this.userService.userInfor(Number(data['user_id']));
   }
 
   @ApiBearerAuth()
@@ -56,7 +63,11 @@ export class UserController {
   @ApiBearerAuth()
   @UseGuards(MyJwtGuard)
   @Post('Search-User')
-  @ApiQuery({ name: 'key', description: 'Nhập chuỗi tìm kiếm, sẽ tìm kiếm các field tên người dùng, tên quán , địa chỉ , số điện thoại và email ' }) 
+  @ApiQuery({
+    name: 'key',
+    description:
+      'Nhập chuỗi tìm kiếm, sẽ tìm kiếm các field {tên người dùng, tên quán , địa chỉ , số điện thoại và email} ',
+  })
   searchUser(@Query('key') page: string) {
     return this.userService.searchUser(page);
   }

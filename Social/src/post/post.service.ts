@@ -187,7 +187,6 @@ export class PostService {
   async getPostFromUser(PostFormUserDTO: PostFromUserDTO) {
     try {
       var currentTime = new Date();
-      console.log(PostFormUserDTO);
       const offset = (PostFormUserDTO.page - 1) * 10;
       const data = await this.prismaService.post.findMany({
         take: PostFormUserDTO.page_size,
@@ -199,15 +198,40 @@ export class PostService {
           user_id: PostFormUserDTO.user_id,
         },
         include: {
-          User: true,
+          User: {
+            select: {
+              fullname: true,
+              url_avatar: true,
+              user_id: true,
+            },
+          },
           PostImage: true,
         },
       });
-      data.forEach((element) => {
+      const commentPromises = data.map(async (element) => {
+        const totalComments = await this.prismaService.post.count({
+          where: {
+            post_top_id: element.post_id,
+          },
+        });
+        const totalReact = await this.prismaService.reactPost.count({
+          where: {
+            post_id: element.post_id,
+          },
+        });
+        element['Total comment'] = totalComments;
+        element['Total react'] = totalReact;
         element.date_create_post = new Date(
           Number(element.date_create_post),
-        ).toUTCString();
+        ).toLocaleString('en-US', {
+          timeZone: 'Asia/Ho_Chi_Minh',
+          hour12: false,
+        });
+        return element;
       });
+
+      const dataWithComments = await Promise.all(commentPromises);
+
       return {
         message: 'Update successful',
         statusCode: 200,
@@ -216,7 +240,7 @@ export class PostService {
           hour12: false,
         }),
         data: {
-          data,
+          dataWithComments,
         },
       };
     } catch (err) {
@@ -275,7 +299,7 @@ export class PostService {
   async getPostAllUser(page: number, pageSize: number) {
     try {
       var currentTime = new Date();
-      const offset = (page - 1) * 10;
+      const offset = (page - 1) * pageSize;
       const data = await this.prismaService.post.findMany({
         take: pageSize,
         skip: offset,
@@ -287,14 +311,29 @@ export class PostService {
           PostImage: true,
         },
       });
-      data.forEach((element) => {
+      const commentPromises = data.map(async (element) => {
+        const totalComments = await this.prismaService.post.count({
+          where: {
+            post_top_id: element.post_id,
+          },
+        });
+        const totalReact = await this.prismaService.reactPost.count({
+          where: {
+            post_id: element.post_id,
+          },
+        });
+        element['Total comment'] = totalComments;
+        element['Total react'] = totalReact;
         element.date_create_post = new Date(
           Number(element.date_create_post),
         ).toLocaleString('en-US', {
           timeZone: 'Asia/Ho_Chi_Minh',
           hour12: false,
         });
+        return element;
       });
+
+      const dataWithComments = await Promise.all(commentPromises);
       return {
         message: 'Update successful',
         statusCode: 200,
@@ -303,7 +342,7 @@ export class PostService {
           hour12: false,
         }),
         data: {
-          data,
+          dataWithComments,
         },
       };
     } catch (error) {

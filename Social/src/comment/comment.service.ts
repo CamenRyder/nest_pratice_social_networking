@@ -23,7 +23,7 @@ export class CommentService {
         data: {
           user_id: Number(userId),
           post_type_id: 2,
-          post_top_id: data.post_top_id,
+          post_top_id: Number(data.post_top_id),
           date_create_post: noeww.toString(),
           description: data.description,
         },
@@ -136,7 +136,7 @@ export class CommentService {
           throw new ForbiddenException('Check some param {postService}');
         }
         return {
-          message: 'Update successful',
+          message: 'Update comment successful',
           statusCode: 200,
           createAt: currentTime.toLocaleString('en-US', {
             timeZone: 'Asia/Ho_Chi_Minh',
@@ -149,7 +149,7 @@ export class CommentService {
         };
       } else {
         return {
-          message: 'Update successful',
+          message: 'Update comment successful',
           statusCode: 200,
           createAt: currentTime.toLocaleString('en-US', {
             timeZone: 'Asia/Ho_Chi_Minh',
