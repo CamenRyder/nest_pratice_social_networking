@@ -7,6 +7,8 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { PostModule } from './post/post.module';
 import { ReactPostModule } from './react-post/react-post.module';
 import { CommentModule } from './comment/comment.module';
+import { TrackingModule } from './tracking/tracking.module';
+
 @Module({
   imports: [
     PrismaModule,
@@ -18,6 +20,7 @@ import { CommentModule } from './comment/comment.module';
     PostModule,
     ReactPostModule,
     CommentModule,
+    TrackingModule,
   ],
 })
 export class AppModule {}

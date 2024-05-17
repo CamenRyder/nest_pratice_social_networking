@@ -3,12 +3,12 @@ import { PrismaService } from 'src/prisma/prisma.service';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const fs = require('fs');
 import {
-  CreateFollowUserDTO,
   ForgotPasswordDTO,
   UpdatePasswordDTO,
   UpdateUserInforDTO,
 } from './dto/user.dto';
 import * as argon from 'argon2';
+import { CreateFollowUserDTO } from 'src/tracking/dto/tracking.dto';
 
 @Injectable()
 export class UserService {

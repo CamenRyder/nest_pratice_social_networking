@@ -43,22 +43,6 @@ export class UpdatePasswordDTO {
   newPassword: string;
 }
 
-export class CreateFollowUserDTO {
-  @ApiProperty({
-    description: 'Đại loại thằng này chính là người dùng',
-    type: String,
-  })
-  @IsString()
-  user_id: number;
-
-  @ApiProperty({
-    description: 'Muốn theo dõi thằng người dùng này',
-    type: String,
-  })
-  @IsString()
-  user_follower_id: number;
-}
-
 export class ForgotPasswordDTO {
   @ApiProperty({ description: 'Your email', type: String })
   @IsEmail()
