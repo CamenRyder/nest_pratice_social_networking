@@ -23,6 +23,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { MyJwtGuard } from '../auth/guard/myjwt.guard';
 import {
+  CreateFollowUserDTO,
   FileUploadDto,
   ForgotPasswordDTO,
   SearchDTO,
@@ -62,6 +63,34 @@ export class UserController {
 
   @ApiBearerAuth()
   @UseGuards(MyJwtGuard)
+  @Post('create-following-a-user')
+  followUser(@Body() data: CreateFollowUserDTO) {
+    return this.userService.followUser(data);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(MyJwtGuard)
+  @Get('get-followee-yours/:user_id')
+  getUserFollowing(@Param('user_id') user_id: string) {
+    return this.userService.getUserFollowing(user_id);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(MyJwtGuard)
+  @Get('get-following-users/:user_id')
+  getFollowingUser(@Param('user_id') user_id: string) {
+    return this.userService.getFollowingUser(user_id);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(MyJwtGuard)
+  @Post('upgrade-account/:user_id')
+  upgradeAccount(@Param('user_id') id: string) {
+    return this.userService.upgradeAccount(id);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(MyJwtGuard)
   @Post('Search-User')
   @ApiQuery({
     name: 'key',
@@ -82,7 +111,7 @@ export class UserController {
     return this.userService.updatePassword(body, parseInt(id));
   }
 
-  @Post('forgot-password')
+  @Put('forgot-password')
   forgotPassword(@Body() body: ForgotPasswordDTO) {
     return this.userService.forgotPassword(body);
   }

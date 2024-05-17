@@ -43,6 +43,22 @@ export class UpdatePasswordDTO {
   newPassword: string;
 }
 
+export class CreateFollowUserDTO {
+  @ApiProperty({
+    description: 'Đại loại thằng này chính là người dùng',
+    type: String,
+  })
+  @IsString()
+  user_id: number;
+
+  @ApiProperty({
+    description: 'Muốn theo dõi thằng người dùng này',
+    type: String,
+  })
+  @IsString()
+  user_follower_id: number;
+}
+
 export class ForgotPasswordDTO {
   @ApiProperty({ description: 'Your email', type: String })
   @IsEmail()
@@ -69,8 +85,11 @@ export class FileUploadDto {
   fileUpload: any;
 }
 
-
 export class SearchDTO {
-  @ApiProperty({ type: String  , description: 'Key là mấy cái như email , sđt , tên người dùng , tên quán ăn đều có thể search được' })
+  @ApiProperty({
+    type: String,
+    description:
+      'Key là mấy cái như email , sđt , tên người dùng , tên quán ăn đều có thể search được',
+  })
   keyword: string;
 }

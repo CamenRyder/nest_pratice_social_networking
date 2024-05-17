@@ -21,12 +21,12 @@ model Dish {
 
 model Follower {
   follow_id                             Int   @id @default(autoincrement())
-  user_follow_er_id                     Int?
+  following_user_id                     Int?
   user_id                               Int?
-  User_Follower_user_idToUser           User? @relation("Follower_user_idToUser", fields: [user_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict, map: "Follower_ibfk_4")
-  User_Follower_user_follow_er_idToUser User? @relation("Follower_user_follow_er_idToUser", fields: [user_follow_er_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict, map: "Follower_ibfk_5")
+  User_Follower_following_user_idToUser User? @relation("Follower_following_user_idToUser", fields: [following_user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "Follower_ibfk_1")
+  User_Follower_user_idToUser           User? @relation("Follower_user_idToUser", fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "Follower_ibfk_4")
 
-  @@index([user_follow_er_id], map: "user_follow_er_id")
+  @@index([following_user_id], map: "user_follow_er_id")
   @@index([user_id], map: "user_id")
 }
 
@@ -35,7 +35,7 @@ model Invoice {
   user_id       Int?
   create_date   String?         @db.VarChar(200)
   total_price   Float?
-  User          User?           @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Restrict, map: "Invoice_ibfk_3")
+  User          User?           @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "Invoice_ibfk_3")
   InvoiceDetail InvoiceDetail[]
 
   @@index([user_id], map: "user_id")
@@ -48,8 +48,8 @@ model InvoiceDetail {
   buy_price         Float?
   amount            Float?
   total             Float?
-  Dish              Dish?    @relation(fields: [dish_id], references: [dish_id], onDelete: Restrict, onUpdate: Restrict, map: "InvoiceDetail_ibfk_1")
-  Invoice           Invoice? @relation(fields: [invoice_id], references: [invoice_id], onDelete: Restrict, onUpdate: Restrict, map: "InvoiceDetail_ibfk_2")
+  Dish              Dish?    @relation(fields: [dish_id], references: [dish_id], onDelete: NoAction, onUpdate: NoAction, map: "InvoiceDetail_ibfk_1")
+  Invoice           Invoice? @relation(fields: [invoice_id], references: [invoice_id], onDelete: NoAction, onUpdate: NoAction, map: "InvoiceDetail_ibfk_2")
 
   @@index([dish_id], map: "dish_id")
   @@index([invoice_id], map: "invoice_id")
@@ -100,7 +100,7 @@ model PostImage {
   url_image        String? @db.Text
   post_id          Int?
   post_image_state String? @db.VarChar(100)
-  Post             Post?   @relation(fields: [post_id], references: [post_id], onDelete: SetNull, onUpdate: SetNull, map: "PostImage_ibfk_1")
+  Post             Post?   @relation(fields: [post_id], references: [post_id], onUpdate: SetNull, map: "PostImage_ibfk_1")
 
   @@index([post_id], map: "post_id")
 }
@@ -116,8 +116,8 @@ model Rating {
   user_id Int?
   post_id Int?
   rate    Int?
-  User    User? @relation(fields: [user_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict, map: "Rating_ibfk_1")
-  Post    Post? @relation(fields: [post_id], references: [post_id], onDelete: Restrict, onUpdate: Restrict, map: "Rating_ibfk_2")
+  User    User? @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "Rating_ibfk_1")
+  Post    Post? @relation(fields: [post_id], references: [post_id], onDelete: NoAction, onUpdate: NoAction, map: "Rating_ibfk_2")
 
   @@index([post_id], map: "post_id")
   @@index([user_id], map: "user_id")
@@ -128,22 +128,22 @@ model ReactPost {
   post_id       Int?
   user_id       Int?
   like_state    Int
-  Post          Post? @relation(fields: [post_id], references: [post_id], onUpdate: Restrict, map: "ReactPost_ibfk_1")
-  User          User? @relation(fields: [user_id], references: [user_id], onUpdate: Restrict, map: "ReactPost_ibfk_2")
+  Post          Post? @relation(fields: [post_id], references: [post_id], onUpdate: NoAction, map: "ReactPost_ibfk_1")
+  User          User? @relation(fields: [user_id], references: [user_id], onUpdate: NoAction, map: "ReactPost_ibfk_2")
 
   @@index([post_id], map: "post_id")
   @@index([user_id], map: "user_id")
 }
 
 model Report {
-  report_id Int     @id @default(autoincrement())
-  user_id   Int?
-  post_id   Int?
-  issue_id  Int?
-  dateReported String @db.VarChar(200) 
-  User      User?   @relation(fields: [user_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict, map: "Report_ibfk_1")
-  Post      Post?   @relation(fields: [post_id], references: [post_id], onDelete: Restrict, onUpdate: Restrict, map: "Report_ibfk_2")
-  Issues    Issues? @relation(fields: [issue_id], references: [issue_id], onDelete: Restrict, onUpdate: Restrict, map: "Report_ibfk_3")
+  report_id    Int     @id @default(autoincrement())
+  user_id      Int?
+  post_id      Int?
+  issue_id     Int?
+  dateReported String  @db.VarChar(200)
+  User         User?   @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "Report_ibfk_1")
+  Post         Post?   @relation(fields: [post_id], references: [post_id], onDelete: NoAction, onUpdate: NoAction, map: "Report_ibfk_2")
+  Issues       Issues? @relation(fields: [issue_id], references: [issue_id], onDelete: NoAction, onUpdate: NoAction, map: "Report_ibfk_3")
 
   @@index([issue_id], map: "issue_id")
   @@index([post_id], map: "post_id")
@@ -157,28 +157,55 @@ model Role {
 }
 
 model User {
-  user_id                                   Int            @id @default(autoincrement())
-  email                                     String         @db.VarChar(400)
-  hash_password                             String?        @db.VarChar(400)
-  fullname                                  String?        @db.VarChar(400)
-  gender                                    Int?           @default(0)
-  country                                   String?        @db.VarChar(400)
-  diner_address                             String?        @db.VarChar(200)
-  diner_name                                String?        @db.VarChar(200)
-  diner_image                               String?        @db.VarChar(400)
-  phone                                     String?        @db.VarChar(400)
-  language                                  String?        @db.VarChar(400)
-  url_avatar                                String?        @default("http://camenryder.xyz/public/img/avatar_default.png") @db.VarChar(400)
+  user_id                                   Int               @id @default(autoincrement())
+  email                                     String            @db.VarChar(400)
+  hash_password                             String?           @db.VarChar(400)
+  fullname                                  String?           @db.VarChar(400)
+  gender                                    Int?              @default(0)
+  country                                   String?           @db.VarChar(400)
+  language                                  String?           @db.VarChar(400)
+  url_avatar                                String?           @default("http://camenryder.xyz/public/img/avatar_default.png") @db.VarChar(400)
   role_id                                   Int?
-  Follower_Follower_user_idToUser           Follower[]     @relation("Follower_user_idToUser")
-  Follower_Follower_user_follow_er_idToUser Follower[]     @relation("Follower_user_follow_er_idToUser")
+  phone                                     String?           @db.VarChar(400)
+  mode_level_id                             Int?
+  BrowsingAccount                           BrowsingAccount[]
+  Follower_Follower_following_user_idToUser Follower[]        @relation("Follower_following_user_idToUser")
+  Follower_Follower_user_idToUser           Follower[]        @relation("Follower_user_idToUser")
   Invoice                                   Invoice[]
   Notification                              Notification[]
   Post                                      Post[]
   Rating                                    Rating[]
   ReactPost                                 ReactPost[]
   Report                                    Report[]
-  Role                                      Role?          @relation(fields: [role_id], references: [role_id], onDelete: Restrict, onUpdate: Restrict, map: "User_ibfk_1")
+  Role                                      Role?             @relation(fields: [role_id], references: [role_id], onDelete: NoAction, onUpdate: NoAction, map: "User_ibfk_1")
+  Moderator_level                           Moderator_level?  @relation(fields: [mode_level_id], references: [mode_level_id], onDelete: NoAction, onUpdate: NoAction, map: "User_ibfk_2")
 
   @@index([role_id], map: "role_id")
+  @@index([mode_level_id], map: "mode_level_id")
+}
+
+model AccountState {
+  account_state_id   Int               @id @default(autoincrement())
+  account_state_name String            @db.VarChar(400)
+  BrowsingAccount    BrowsingAccount[]
+}
+
+model BrowsingAccount {
+  browsing_account_id Int           @id @default(autoincrement())
+  user_id             Int?
+  create_at           String?       @db.VarChar(400)
+  moderator_accepted  Int?
+  account_state_id    Int?
+  User                User?         @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "BrowsingAccount_ibfk_1")
+  AccountState        AccountState? @relation(fields: [account_state_id], references: [account_state_id], onDelete: NoAction, onUpdate: NoAction, map: "BrowsingAccount_ibfk_3")
+
+  @@index([user_id], map: "user_id")
+  @@index([account_state_id], map: "account_state_id")
+}
+
+model Moderator_level {
+  mode_level_id     Int    @id @default(autoincrement())
+  name_mod_level    String @db.VarChar(400)
+  description_level String @db.VarChar(400)
+  User              User[]
 }

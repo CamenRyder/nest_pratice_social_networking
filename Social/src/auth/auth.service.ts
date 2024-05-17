@@ -34,7 +34,7 @@ export class AuthService {
         // select: { user_id: true, email: true, hash_password: false },
         include: {
           Post: true,
-          Follower_Follower_user_follow_er_idToUser: true,
+          Follower_Follower_following_user_idToUser: true,
           Follower_Follower_user_idToUser: true,
         },
       });
