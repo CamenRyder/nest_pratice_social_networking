@@ -5,7 +5,6 @@ import {
   PostFromUserDTO,
   ReportPostDTO,
 } from './dto/post.dto';
-import { skip, take } from 'rxjs';
 const fs = require('fs');
 
 @Injectable()
@@ -324,16 +323,10 @@ export class PostService {
         });
         element['Total comment'] = totalComments;
         element['Total react'] = totalReact;
-        element.date_create_post = new Date(
-          Number(element.date_create_post),
-        ).toLocaleString('en-US', {
-          timeZone: 'Asia/Ho_Chi_Minh',
-          hour12: false,
-        });
         return element;
       });
 
-      const dataWithComments = await Promise.all(commentPromises);
+      const dataW = await Promise.all(commentPromises);
       return {
         message: 'Update successful',
         statusCode: 200,
@@ -341,9 +334,7 @@ export class PostService {
           timeZone: 'Asia/Ho_Chi_Minh',
           hour12: false,
         }),
-        data: {
-          dataWithComments,
-        },
+        data: dataW,
       };
     } catch (error) {
       return {
