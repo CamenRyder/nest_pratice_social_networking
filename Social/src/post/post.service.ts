@@ -23,6 +23,7 @@ export class PostService {
           description: description,
         },
       });
+      
       delete postCreated.date_create_post;
       if (imgName != '') {
         const url2 = 'http://camenryder.xyz/public/img/' + imgName;
@@ -88,6 +89,8 @@ export class PostService {
             isDelete,
           },
         };
+      }else {
+        throw new ForbiddenException("Bạn ko đc quyền xóa post")
       }
     } catch (err) {
       return {
@@ -220,12 +223,6 @@ export class PostService {
         });
         element['Total comment'] = totalComments;
         element['Total react'] = totalReact;
-        element.date_create_post = new Date(
-          Number(element.date_create_post),
-        ).toLocaleString('en-US', {
-          timeZone: 'Asia/Ho_Chi_Minh',
-          hour12: false,
-        });
         return element;
       });
 
@@ -238,9 +235,7 @@ export class PostService {
           timeZone: 'Asia/Ho_Chi_Minh',
           hour12: false,
         }),
-        data: {
-          dataWithComments,
-        },
+        data: dataWithComments,
       };
     } catch (err) {
       return {

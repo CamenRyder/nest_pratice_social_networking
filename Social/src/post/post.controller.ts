@@ -126,7 +126,7 @@ export class PostController {
 
   @ApiBearerAuth()
   @UseGuards(MyJwtGuard)
-  @Put('update-post/:user_id')
+  @Put('update-post/:post_id')
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     description: 'create post with content and image',

@@ -21,8 +21,8 @@ model Dish {
 
 model Follower {
   follow_id                             Int   @id @default(autoincrement())
-  following_user_id                     Int?
   user_id                               Int?
+  following_user_id                     Int?
   User_Follower_following_user_idToUser User? @relation("Follower_following_user_idToUser", fields: [following_user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "Follower_ibfk_1")
   User_Follower_user_idToUser           User? @relation("Follower_user_idToUser", fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "Follower_ibfk_4")
 
@@ -168,6 +168,7 @@ model User {
   role_id                                   Int?
   phone                                     String?           @db.VarChar(400)
   mode_level_id                             Int?
+  url_background_profile                    String?           @default("http://camenryder.xyz/public/img/background_profile_default.jpg") @db.VarChar(400)
   BrowsingAccount                           BrowsingAccount[]
   Follower_Follower_following_user_idToUser Follower[]        @relation("Follower_following_user_idToUser")
   Follower_Follower_user_idToUser           Follower[]        @relation("Follower_user_idToUser")

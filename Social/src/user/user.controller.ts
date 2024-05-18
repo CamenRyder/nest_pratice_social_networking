@@ -25,6 +25,8 @@ import { MyJwtGuard } from '../auth/guard/myjwt.guard';
 import {
   FileUploadDto,
   ForgotPasswordDTO,
+  InforByUserId,
+  Response_UserInfo,
   UpdatePasswordDTO,
   UpdateUserInforDTO,
 } from './dto/user.dto';
@@ -35,6 +37,7 @@ import {
   ApiConsumes,
   ApiBody,
   ApiQuery,
+  ApiOkResponse,
 } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 
@@ -48,8 +51,15 @@ export class UserController {
   @Get('me')
   me(@Req() req: Request) {
     const data = req['user'];
-    // return data;
     return this.userService.userInfor(Number(data['user_id']));
+  }
+
+  @Post('yours/:user_id')
+  @ApiOkResponse({type: Response_UserInfo})
+  yours(@Body() data: InforByUserId) {  
+    return this.userService.userInforByUserId(data);
+    // bi chiem port roi :>
+    // Ua the xem swagger co thay doi gi hem. Hay can build lai
   }
 
   @ApiBearerAuth()
@@ -72,7 +82,7 @@ export class UserController {
   @ApiQuery({
     name: 'key',
     description:
-      'Nhập chuỗi tìm kiếm, sẽ tìm kiếm các field {tên người dùng, tên quán , địa chỉ , số điện thoại và email} ',
+      'Nhập chuỗi tìm kiếm, sẽ tìm kiếm các field {tên người dùng , số điện thoại và email} ',
   })
   searchUser(@Query('key') page: string) {
     return this.userService.searchUser(page);
@@ -128,6 +138,48 @@ export class UserController {
   ) {
     try {
       return this.userService.saveAvatar(userId, file.filename);
+    } catch (err) {
+      throw new HttpException('Lỗi BE', 500);
+    }
+  }
+
+
+
+  @ApiBearerAuth()
+  @UseGuards(MyJwtGuard)
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'upload avatar',
+    type: FileUploadDto,
+  })
+  @UseInterceptors(
+    FileInterceptor('fileUpload', {
+      storage: diskStorage({
+        destination: process.cwd() + '/public/img',
+        filename: (req, file, callback) => {
+          file.size;
+          return callback(null, Date.now() + '_' + file.originalname);
+        },
+      }),
+    }),
+  )
+  @Put('update-background-profile/:user_id')
+  updateBackgroundProfile(
+    @Param('user_id') userId: string,
+    @UploadedFile(
+      new ParseFilePipeBuilder()
+        .addFileTypeValidator({ fileType: '.(png|jpeg|jpg)' })
+        .addMaxSizeValidator({
+          maxSize: 20000000,
+          // message:
+          //   'Nếu hiện chữ này báo ngay cho Hiếu. Có thể file này up lên hơi lớn?',
+        })
+        .build({ errorHttpStatusCode: HttpStatus.BAD_REQUEST }),
+    )
+    file: Express.Multer.File,
+  ) {
+    try {
+      return this.userService.updateBackgroundProfile(userId, file.filename);
     } catch (err) {
       throw new HttpException('Lỗi BE', 500);
     }

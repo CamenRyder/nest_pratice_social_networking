@@ -38,17 +38,17 @@ export class TrackingController {
     return this.trackingService.getFollowingUser(user_id);
   }
 
-  @ApiBearerAuth()
-  @UseGuards(MyJwtGuard)
-  @Delete('remove-follow-user')
-  removeFollowUser(data: RemoveUserFollow) {
-    return this.trackingService.removeUserFollow(data);
-  }
+  // @ApiBearerAuth()
+  // @UseGuards(MyJwtGuard)
+  // @Delete('remove-follow-user')
+  // removeFollowUser(@Body() data: RemoveUserFollow) {
+  //   return this.trackingService.removeUserFollow(data);
+  // }
 
-  @ApiBearerAuth()
-  @UseGuards(MyJwtGuard)
-  @Delete('remove-user-following')
-  removeUserFollowing(@Param('user_id') user_id: string) {
-    return this.trackingService.getFollowingUser(user_id);
-  }
+  // @ApiBearerAuth()
+  // @UseGuards(MyJwtGuard)
+  // @Delete('remove-user-following')
+  // removeUserFollowing(@Body() data: RemoveUserFollow) {
+  //   return this.trackingService.removeUserFollowing(data);
+  // }
 }

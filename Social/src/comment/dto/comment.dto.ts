@@ -10,7 +10,7 @@ export class CreateCommentUserDTO {
   @IsString()
   post_top_id: number;
 
-  @ApiProperty({ type: 'string', format: 'binary' })
+  @ApiProperty({ type: 'string', format: 'binary', required: false })
   fileUpload: any;
 }
 

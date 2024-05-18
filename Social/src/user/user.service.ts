@@ -4,6 +4,8 @@ import { PrismaService } from 'src/prisma/prisma.service';
 const fs = require('fs');
 import {
   ForgotPasswordDTO,
+  InforByUserId,
+  Response_UserInfo,
   UpdatePasswordDTO,
   UpdateUserInforDTO,
 } from './dto/user.dto';
@@ -12,6 +14,84 @@ import { CreateFollowUserDTO } from 'src/tracking/dto/tracking.dto';
 
 @Injectable()
 export class UserService {
+  async userInforByUserId(data: InforByUserId) {
+    try {
+      const currentTime = new Date();
+      const totalFollowing = await this.prismaService.follower.count({
+        where: {
+          user_id: data.user_id_via,
+        },
+      });
+      const totalFollowee = await this.prismaService.follower.count({
+        where: {
+          following_user_id: data.user_id_via,
+        },
+      });
+      const yourFollowThisAccount = await this.prismaService.follower.count({
+        where: {
+          user_id: data.user_id,
+          following_user_id: data.user_id_via,
+        },
+      });
+      const profile = await this.prismaService.user.findFirst({
+        where: {
+          user_id: data.user_id_via,
+        },
+        select: {
+          fullname: true,
+          email: true,
+          url_avatar: true,
+          url_background_profile: true,
+        },
+      });
+
+      // Chỗ này nếu được thì em nên chơi Promise.all thay vì nhiều await.
+      // Vì nhiều await thì nó phải đợi await này xong mới tới await khác. => lâu.
+      // Promise.all thì nó chạy đồng thời cả đám luôn
+
+      // Ví dụ nè:
+      // Như thế này thì em vẫn lấy được. Nhưng nhớ nó có thứ tự nhen
+      
+      // const [totalFollowing, totalFollowee, yourFollowThisAccount, profile] = await Promise.all([
+      //   this.prismaService.follower.count({where: {
+      //     user_id: data.user_id_via,
+      //   },}), => totalFollowing
+      //   // query 2, => totalFollowee
+      //   // query 3, => yourFollowThisAccount
+      //   // query 4, => profile
+      // ])
+
+
+      profile['total_following'] = totalFollowing;
+      profile['total_followee'] = totalFollowee;
+      profile['is_follow_this_profile'] = yourFollowThisAccount ? true : false;
+      // Ý em là ghi lại nhiều quá à/
+      // Chỗ này thì em có thể dùng DTO. Có mấy cái có thể viết sẵn như createAt nè, status code mặc định, v.v
+      // Chỗ này anh nghĩ trước tiên là em làm 1 cái dto base. Xong rồi các dto khác sẽ kế thừa dto này.
+      // Thế là mặc định mấy cái dto sau có sẵn trường như message, statusCode, hay createAt rồi. Em thêm phần data vô thôi
+      // Đúng rồi. Base dto.
+      // return {
+      //   message: 'Successful',
+      //   statusCode: 200,
+      //   createAt: currentTime.toLocaleString('en-US', {
+      //     timeZone: 'Asia/Ho_Chi_Minh',
+      //     hour12: false,
+      //   }),
+      //   profile,
+      // };
+      // Neu em muon thay message thi
+      // Request , param hay query deu lam dc nhen.
+      // Anh nghe chua ro lam. Cai Base này cơ bản là để em hạn chế viết lại thôi. Em viết như trước cũng đc. Nhưng mà nó kiểu em phải viết lại nhiều thì khó chịu thôi.
+      // Còn CRUD hay không thì tùy em ứng dụng ấy. Cái field createAt của em thì nó bị 
+      // Còn tùy vào exception ấy em. Ví dụ lỗi hệ thống thì em nên trả throw. Còn lỗi người dùng thì cái nào cũng đc. Nhưng anh vẫn nghiên qua throw hơn để đồng bộ.
+      const something = {profile: profile, message: 'Something'}
+      return new Response_UserInfo(something); 
+    } catch (err) {
+      return {
+        messageError: err,
+      };
+    }
+  }
   // người đang theo dõi mình
   async getUserFollowing(user_id: string) {
     try {
@@ -54,6 +134,7 @@ export class UserService {
           }),
         };
     } catch (err) {
+      // Nếu em throw thì anh không chắc. Này em đọc doc của Nest thử. Nhưng mà nếu em trả response thì được.
       return {
         messageError: err,
       };
@@ -191,19 +272,37 @@ export class UserService {
   async userInfor(user_id: number) {
     try {
       const currentTime = new Date();
-      const data = await this.prismaService.user.findFirst({
+      const totalFollowing = await this.prismaService.follower.count({
         where: {
           user_id: user_id,
         },
-        include: {
-          Post: {
-            include: {
-              PostImage: true,
-              ReactPost: true,
-            },
-          },
+      });
+      const totalFollowee = await this.prismaService.follower.count({
+        where: {
+          following_user_id:user_id,
         },
       });
+      const yourFollowThisAccount = await this.prismaService.follower.count({
+        where: {
+          user_id: user_id,
+          following_user_id: user_id,
+        },
+      });
+      const profile = await this.prismaService.user.findFirst({
+        where: {
+          user_id: user_id,
+        },
+        select: {
+          fullname: true,
+          email: true,
+          url_avatar: true,
+          url_background_profile: true,
+        },
+      });
+
+      profile['total_following'] = totalFollowing;
+      profile['total_followee'] = totalFollowee;
+      profile['is_follow_this_profile'] = yourFollowThisAccount ? true : false;
       return {
         message: 'Successful',
         statusCode: 200,
@@ -211,7 +310,7 @@ export class UserService {
           timeZone: 'Asia/Ho_Chi_Minh',
           hour12: false,
         }),
-        data,
+        profile,
       };
     } catch (err) {
       return {
@@ -272,7 +371,9 @@ export class UserService {
       };
     }
   }
-  constructor(private prismaService: PrismaService) {}
+  // Tại sao constructor ở đây :>>
+  // À do thằng vscode tự gen ở trên à. Này anh cũng gặp mà không kiếm ra cách tắt. Nên anh bay qua IDEA ngồi code :>
+  constructor(private prismaService: PrismaService) {} 
 
   async updateUserInfor(data: UpdateUserInforDTO, id: number) {
     try {
@@ -344,6 +445,7 @@ export class UserService {
       return err;
     }
   }
+
   async saveAvatar(userId: string, imgName: string) {
     const user = await this.prismaService.user.findUnique({
       where: {
@@ -374,6 +476,44 @@ export class UserService {
     });
 
     return 'Upload thành công !';
+  }
+
+  async updateBackgroundProfile(userId: string, imgName: string) {
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        user_id: Number(userId),
+      },
+    });
+    const substringToRemove = 'http://camenryder.xyz/';
+    // const url1 = 'http://localhost:8888/public/img/' + imgName;
+    const url2 = 'http://camenryder.xyz/public/img/' + imgName;
+    if (user.url_background_profile != null) {
+      if (
+        user.url_background_profile !=
+        'http://camenryder.xyz/public/img/avatar_default.png'
+      ) {
+        const filePath = user.url_avatar.replace(substringToRemove, '');
+        fs.unlink(filePath, (err) => {
+          if (err) {
+            throw new ForbiddenException('Old file avatar couldnt delete');
+          }
+        });
+      }
+    }
+    user.url_background_profile = url2;
+    const data = await this.prismaService.user.update({
+      data: user,
+      where: {
+        user_id: Number(userId),
+      },
+    });
+    const currentDate = new Date();
+    return {
+      statusCode: 200,
+      message: 'Update background profile successful !',
+      dateTime: currentDate.toLocaleString(),
+      data: data,
+    };
   }
 
   async updatePassword(data: UpdatePasswordDTO, id: number) {

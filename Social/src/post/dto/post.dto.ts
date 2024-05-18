@@ -6,7 +6,7 @@ export class CreatePostUserDTO {
   @IsString()
   description: string;
 
-  @ApiProperty({ type: 'string', format: 'binary' })
+  @ApiProperty({ type: 'string', format: 'binary', required: false })
   fileUpload: any;
 }
 

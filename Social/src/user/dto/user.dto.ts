@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNumber, IsString } from 'class-validator';
+import { BaseResponse } from 'src/base.dto';
 
 export class UpdateUserInforDTO {
   @ApiProperty({
@@ -13,13 +14,14 @@ export class UpdateUserInforDTO {
   @IsString()
   country: string;
 
-  //   @ApiProperty({
-  //     description: 'Update your gender (1: woman , 0: man)',
-  //     type: Number,
-  //   })
-  //   @ApiProperty({ description: 'Add new age', type: Number })
-  //   @IsNumber()
-  //   age: number;
+  // @ApiProperty({
+  //   description: 'Update your gender (1: woman , 0: man)',
+  //   type: Number,
+  // })
+  // @ApiProperty({ description: 'Add new age', type: Number })
+  // @IsNumber()
+  // age: number;
+
   @ApiProperty({ description: 'Add your language by string', type: String })
   @IsString()
   language: string;
@@ -64,6 +66,19 @@ export type fileDto = {
   size: number;
 };
 
+export class InforByUserId {
+  @ApiProperty({ description: 'Your email', type: Number })
+  @IsNumber()
+  user_id: number;
+
+  @ApiProperty({
+    description: 'User id you want via his profile',
+    type: Number,
+  })
+  @IsNumber()
+  user_id_via: number;
+}
+
 export class FileUploadDto {
   @ApiProperty({ type: 'string', format: 'binary' })
   fileUpload: any;
@@ -73,7 +88,18 @@ export class SearchDTO {
   @ApiProperty({
     type: String,
     description:
-      'Key là mấy cái như email , sđt , tên người dùng , tên quán ăn đều có thể search được',
+      'Key là mấy cái như email , sđt , tên người dùng đều có thể search được',
   })
   keyword: string;
+}
+
+export class Response_UserInfo extends BaseResponse {
+  @ApiProperty({type: Object, description: 'User info'})
+  profile: any;
+
+  constructor(data: any){
+    super(data);
+    this.profile = data.profile;
+    // Okie
+  }
 }
