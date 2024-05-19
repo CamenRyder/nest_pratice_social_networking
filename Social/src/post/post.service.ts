@@ -1,6 +1,7 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import {
+  CreatePostUserDTOabc,
   DeletePostUserDTO,
   PostFromUserDTO,
   ReportPostDTO,
@@ -23,7 +24,7 @@ export class PostService {
           description: description,
         },
       });
-      
+
       delete postCreated.date_create_post;
       if (imgName != '') {
         const url2 = 'http://camenryder.xyz/public/img/' + imgName;
@@ -69,6 +70,142 @@ export class PostService {
     }
   }
 
+  async createPostMultiple(
+    userId: string,
+    filenames: any,
+    description: CreatePostUserDTOabc,
+  ) {
+    try {
+      var currentTime = new Date();
+      var noeww = Date.now();
+      //   await this.deleteImageFormPostImage();
+      const postCreated = await this.prismaService.post.create({
+        data: {
+          user_id: Number(userId),
+          post_type_id: 1,
+          date_create_post: noeww.toString(),
+          description: description.description,
+        },
+      });
+
+      delete postCreated.date_create_post;
+      if (filenames != null) {
+        filenames.forEach(async (imgName: { filename: string }) => {
+          const url2 = 'http://camenryder.xyz/public/img/' + imgName.filename;
+          const imageCreate = await this.prismaService.postImage.create({
+            data: {
+              url_image: url2,
+              post_id: postCreated.post_id,
+            },
+          });
+        });
+        const imagess = await this.prismaService.postImage.findMany({
+          where: {
+            post_id: postCreated.post_id,
+          },
+        });
+        return {
+          message: 'Create successful',
+          statusCode: 200,
+          createAt: currentTime.toLocaleString('en-US', {
+            timeZone: 'Asia/Ho_Chi_Minh',
+            hour12: false,
+          }),
+          data: {
+            postCreated,
+            imagess,
+          },
+        };
+      } else {
+        return {
+          message: 'Create successful',
+          statusCode: 200,
+          createAt: currentTime.toLocaleString('en-US', {
+            timeZone: 'Asia/Ho_Chi_Minh',
+            hour12: false,
+          }),
+          data: {
+            postCreated,
+          },
+        };
+      }
+    } catch (err) {
+      return {
+        messageError: err,
+      };
+    }
+  }
+
+  async updatePostMultiple(
+    post_id: string,
+    filenames: any,
+    description: CreatePostUserDTOabc,
+  ) {
+    try {
+      var currentTime = new Date();
+      var noeww = Date.now();
+      //   await this.deleteImageFormPostImage();
+      const postData = await this.prismaService.post.update({
+        where: {
+          post_id: Number(post_id),
+        },
+        data: {
+          description: description.description,
+        },
+      });
+
+      if (filenames != null) {
+        await this.prismaService.postImage.deleteMany({
+          where: {
+            post_id: Number(post_id),
+          },
+        });
+        filenames.forEach(async (imgName: { filename: string }) => {
+          const url2 = 'http://camenryder.xyz/public/img/' + imgName.filename;
+          const imageCreate = await this.prismaService.postImage.create({
+            data: {
+              url_image: url2,
+              post_id: Number(post_id),
+            },
+          });
+        });
+        const imagess = await this.prismaService.postImage.findMany({
+          where: {
+            post_id: Number(post_id),
+          },
+        });
+        return {
+          message: 'Update post successful',
+          statusCode: 200,
+          createAt: currentTime.toLocaleString('en-US', {
+            timeZone: 'Asia/Ho_Chi_Minh',
+            hour12: false,
+          }),
+          data: {
+            imagess,
+            postData
+          },
+        };
+      } else {
+        return {
+          message: 'Update post successful',
+          statusCode: 200,
+          createAt: currentTime.toLocaleString('en-US', {
+            timeZone: 'Asia/Ho_Chi_Minh',
+            hour12: false,
+          }),
+          data: {
+            postData,
+          },
+        };
+      }
+    } catch (err) {
+      return {
+        messageError: err,
+      };
+    }
+  }
+
   async deletePost(data: DeletePostUserDTO) {
     try {
       const isDelete = await this.prismaService.post.delete({
@@ -89,8 +226,8 @@ export class PostService {
             isDelete,
           },
         };
-      }else {
-        throw new ForbiddenException("Bạn ko đc quyền xóa post")
+      } else {
+        throw new ForbiddenException('Bạn ko đc quyền xóa post');
       }
     } catch (err) {
       return {

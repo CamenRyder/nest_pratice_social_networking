@@ -10,6 +10,11 @@ export class CreatePostUserDTO {
   fileUpload: any;
 }
 
+export class CreatePostUserDTOabc {
+  @ApiProperty({ type: 'string', required: false })
+  description: string;
+}
+
 export class UpdatePostDTO {
   @ApiProperty({ description: 'Your content update', type: String })
   @IsString()
@@ -38,17 +43,19 @@ export class PostFromUserDTO {
 }
 
 export class DeletePostUserDTO {
-  @ApiProperty({ description: 'Your post_id you want delete', type: Number })
+  @ApiProperty({
+    description: 'Your post_id you want delete',
+    type: Number,
+  })
   @IsNumber()
   @IsNotEmpty()
   post_id: number;
 
   @ApiProperty({
-    type: Number,
     description: 'Your user_id , can get  on Token',
+    required: false,
   })
-  @IsNumber()
-  @IsNotEmpty()
+
   user_id: number;
 }
 

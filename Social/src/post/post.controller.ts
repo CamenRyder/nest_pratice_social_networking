@@ -18,7 +18,10 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { PostService } from './post.service';
-import { FileInterceptor } from '@nestjs/platform-express/multer';
+import {
+  FileInterceptor,
+  FilesInterceptor,
+} from '@nestjs/platform-express/multer';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -29,6 +32,7 @@ import {
 import { FileUploadDto } from 'src/user/dto/user.dto';
 import {
   CreatePostUserDTO,
+  CreatePostUserDTOabc,
   DeletePostUserDTO,
   PostFromUserDTO,
   ReportPostDTO,
@@ -71,109 +75,109 @@ export class PostController {
     }
   }
 
-  @ApiBearerAuth()
-  @UseGuards(MyJwtGuard)
-  @Post('create-post/:user_id')
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    description: 'create post with content and image',
-    type: CreatePostUserDTO,
-  })
-  @UseInterceptors(
-    FileInterceptor('fileUpload', {
-      storage: diskStorage({
-        destination: process.cwd() + '/public/img',
-        filename: (req, file, callback) => {
-          if (file == null) {
-            return callback(null, '');
-          }
-          return callback(null, Date.now() + '_' + file.originalname);
-        },
-      }),
-    }),
-  )
-  createYourPost(
-    @Param('user_id') userId: string,
-    @Body() createDTO: CreatePostUserDTO,
-    @UploadedFile(
-      new ParseFilePipeBuilder()
-        .addFileTypeValidator({ fileType: '.(png|jpeg|jpg)' })
-        .addMaxSizeValidator({
-          maxSize: 20000000,
-          // message:
-          //   'Nếu hiện chữ này báo ngay cho Hiếu. Có thể file này up lên hơi lớn?',
-        })
-        .build({
-          fileIsRequired: false,
-          errorHttpStatusCode: HttpStatus.BAD_REQUEST,
-        }),
-    )
-    file: Express.Multer.File,
-  ) {
-    try {
-      if (file == null) {
-        return this.postService.createPost(userId, '', createDTO.description);
-      }
-      return this.postService.createPost(
-        userId,
-        file.filename,
-        createDTO.description,
-      );
-    } catch (err) {
-      throw new HttpException('Lỗi BE {createYourPost - postController}', 500);
-    }
-  }
+  // @ApiBearerAuth()
+  // @UseGuards(MyJwtGuard)
+  // @Post('create-post/:user_id')
+  // @ApiConsumes('multipart/form-data')
+  // @ApiBody({
+  //   description: 'create post with content and image',
+  //   type: CreatePostUserDTO,
+  // })
+  // @UseInterceptors(
+  //   FileInterceptor('fileUpload', {
+  //     storage: diskStorage({
+  //       destination: process.cwd() + '/public/img',
+  //       filename: (req, file, callback) => {
+  //         if (file == null) {
+  //           return callback(null, '');
+  //         }
+  //         return callback(null, Date.now() + '_' + file.originalname);
+  //       },
+  //     }),
+  //   }),
+  // )
+  // createYourPost(
+  //   @Param('user_id') userId: string,
+  //   @Body() createDTO: CreatePostUserDTO,
+  //   @UploadedFile(
+  //     new ParseFilePipeBuilder()
+  //       .addFileTypeValidator({ fileType: '.(png|jpeg|jpg)' })
+  //       .addMaxSizeValidator({
+  //         maxSize: 20000000,
+  //         // message:
+  //         //   'Nếu hiện chữ này báo ngay cho Hiếu. Có thể file này up lên hơi lớn?',
+  //       })
+  //       .build({
+  //         fileIsRequired: false,
+  //         errorHttpStatusCode: HttpStatus.BAD_REQUEST,
+  //       }),
+  //   )
+  //   file: Express.Multer.File,
+  // ) {
+  //   try {
+  //     if (file == null) {
+  //       return this.postService.createPost(userId, '', createDTO.description);
+  //     }
+  //     return this.postService.createPost(
+  //       userId,
+  //       file.filename,
+  //       createDTO.description,
+  //     );
+  //   } catch (err) {
+  //     throw new HttpException('Lỗi BE {createYourPost - postController}', 500);
+  //   }
+  // }
 
-  @ApiBearerAuth()
-  @UseGuards(MyJwtGuard)
-  @Put('update-post/:post_id')
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    description: 'create post with content and image',
-    type: CreatePostUserDTO,
-  })
-  @UseInterceptors(
-    FileInterceptor('fileUpload', {
-      storage: diskStorage({
-        destination: process.cwd() + '/public/img',
-        filename: (req, file, callback) => {
-          if (file == null) {
-            return callback(null, '');
-          }
-          return callback(null, Date.now() + '_' + file.originalname);
-        },
-      }),
-    }),
-  )
-  updateYourPost(
-    @Param('post_id') postId: string,
-    @Body() createDTO: CreatePostUserDTO,
-    @UploadedFile(
-      new ParseFilePipeBuilder()
-        .addFileTypeValidator({ fileType: '.(png|jpeg|jpg)' })
-        .addMaxSizeValidator({
-          maxSize: 20000000,
-        })
-        .build({
-          fileIsRequired: false,
-          errorHttpStatusCode: HttpStatus.BAD_REQUEST,
-        }),
-    )
-    file: Express.Multer.File,
-  ) {
-    try {
-      if (file == null) {
-        return this.postService.updatePost(postId, '', createDTO.description);
-      }
-      return this.postService.updatePost(
-        postId,
-        file.filename,
-        createDTO.description,
-      );
-    } catch (err) {
-      throw new HttpException('Lỗi BE {createYourPost - postController}', 500);
-    }
-  }
+  // @ApiBearerAuth()
+  // @UseGuards(MyJwtGuard)
+  // @Put('update-post/:post_id')
+  // @ApiConsumes('multipart/form-data')
+  // @ApiBody({
+  //   description: 'create post with content and image',
+  //   type: CreatePostUserDTO,
+  // })
+  // @UseInterceptors(
+  //   FileInterceptor('fileUpload', {
+  //     storage: diskStorage({
+  //       destination: process.cwd() + '/public/img',
+  //       filename: (req, file, callback) => {
+  //         if (file == null) {
+  //           return callback(null, '');
+  //         }
+  //         return callback(null, Date.now() + '_' + file.originalname);
+  //       },
+  //     }),
+  //   }),
+  // )
+  // updateYourPost(
+  //   @Param('post_id') postId: string,
+  //   @Body() createDTO: CreatePostUserDTO,
+  //   @UploadedFile(
+  //     new ParseFilePipeBuilder()
+  //       .addFileTypeValidator({ fileType: '.(png|jpeg|jpg)' })
+  //       .addMaxSizeValidator({
+  //         maxSize: 20000000,
+  //       })
+  //       .build({
+  //         fileIsRequired: false,
+  //         errorHttpStatusCode: HttpStatus.BAD_REQUEST,
+  //       }),
+  //   )
+  //   file: Express.Multer.File,
+  // ) {
+  //   try {
+  //     if (file == null) {
+  //       return this.postService.updatePost(postId, '', createDTO.description);
+  //     }
+  //     return this.postService.updatePost(
+  //       postId,
+  //       file.filename,
+  //       createDTO.description,
+  //     );
+  //   } catch (err) {
+  //     throw new HttpException('Lỗi BE {createYourPost - postController}', 500);
+  //   }
+  // }
 
   @ApiBearerAuth()
   @UseGuards(MyJwtGuard)
@@ -201,5 +205,53 @@ export class PostController {
         500,
       );
     }
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(MyJwtGuard)
+  @Post('create-post/:user_id')
+  @UseInterceptors(
+    FilesInterceptor('files', 10, {
+      storage: diskStorage({
+        destination: process.cwd() + '/public/img',
+        filename: (req, file, callback) => {
+          if (file == null) {
+            return callback(null, '');
+          }
+          return callback(null, Date.now() + '_' + file.originalname);
+        },
+      }),
+    }),
+  )
+  createPost(
+    @Param('user_id') user_id: string,
+    @UploadedFiles() files: Array<Express.Multer.File>,
+    @Body() description: CreatePostUserDTOabc,
+  ) {
+    return this.postService.createPostMultiple(user_id, files, description);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(MyJwtGuard)
+  @Post('update-post/:post_id')
+  @UseInterceptors(
+    FilesInterceptor('files', 10, {
+      storage: diskStorage({
+        destination: process.cwd() + '/public/img',
+        filename: (req, file, callback) => {
+          if (file == null) {
+            return callback(null, '');
+          }
+          return callback(null, Date.now() + '_' + file.originalname);
+        },
+      }),
+    }),
+  )
+  updatePost(
+    @Param('post_id') post_id: string,
+    @UploadedFiles() files: Array<Express.Multer.File>,
+    @Body() description: CreatePostUserDTOabc,
+  ) {
+    return this.postService.updatePostMultiple(post_id, files, description);
   }
 }

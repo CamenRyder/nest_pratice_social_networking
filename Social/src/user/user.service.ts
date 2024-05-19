@@ -51,7 +51,7 @@ export class UserService {
 
       // Ví dụ nè:
       // Như thế này thì em vẫn lấy được. Nhưng nhớ nó có thứ tự nhen
-      
+
       // const [totalFollowing, totalFollowee, yourFollowThisAccount, profile] = await Promise.all([
       //   this.prismaService.follower.count({where: {
       //     user_id: data.user_id_via,
@@ -60,7 +60,6 @@ export class UserService {
       //   // query 3, => yourFollowThisAccount
       //   // query 4, => profile
       // ])
-
 
       profile['total_following'] = totalFollowing;
       profile['total_followee'] = totalFollowee;
@@ -82,10 +81,10 @@ export class UserService {
       // Neu em muon thay message thi
       // Request , param hay query deu lam dc nhen.
       // Anh nghe chua ro lam. Cai Base này cơ bản là để em hạn chế viết lại thôi. Em viết như trước cũng đc. Nhưng mà nó kiểu em phải viết lại nhiều thì khó chịu thôi.
-      // Còn CRUD hay không thì tùy em ứng dụng ấy. Cái field createAt của em thì nó bị 
+      // Còn CRUD hay không thì tùy em ứng dụng ấy. Cái field createAt của em thì nó bị
       // Còn tùy vào exception ấy em. Ví dụ lỗi hệ thống thì em nên trả throw. Còn lỗi người dùng thì cái nào cũng đc. Nhưng anh vẫn nghiên qua throw hơn để đồng bộ.
-      const something = {profile: profile, message: 'Something'}
-      return new Response_UserInfo(something); 
+      const something = { profile: profile, message: 'Something' };
+      return new Response_UserInfo(something);
     } catch (err) {
       return {
         messageError: err,
@@ -279,7 +278,7 @@ export class UserService {
       });
       const totalFollowee = await this.prismaService.follower.count({
         where: {
-          following_user_id:user_id,
+          following_user_id: user_id,
         },
       });
       const yourFollowThisAccount = await this.prismaService.follower.count({
@@ -373,7 +372,7 @@ export class UserService {
   }
   // Tại sao constructor ở đây :>>
   // À do thằng vscode tự gen ở trên à. Này anh cũng gặp mà không kiếm ra cách tắt. Nên anh bay qua IDEA ngồi code :>
-  constructor(private prismaService: PrismaService) {} 
+  constructor(private prismaService: PrismaService) {}
 
   async updateUserInfor(data: UpdateUserInforDTO, id: number) {
     try {
