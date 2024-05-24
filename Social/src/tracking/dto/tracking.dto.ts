@@ -17,18 +17,36 @@ export class CreateFollowUserDTO {
   user_follower_id: number;
 }
 
-export class RemoveUserFollow {
+export class RemoveFollowerUser {
   @ApiProperty({
-    description: 'Đại loại thằng này chính là người dùng',
+    description: 'id chính chủ',
     type: Number,
   })
   @IsNumber()
   user_id: number;
 
   @ApiProperty({
-    description: 'Muốn hủy theo dõi thằng người dùng này',
+    description: 'Follower {người đang theo dõi chính chủ } ',
     type: Number,
   })
   @IsNumber()
   user_follower_id: number;
 }
+
+
+export class RemoveFollowingUser {
+  @ApiProperty({
+    description: 'id chính chủ',
+    type: Number,
+  })
+  @IsNumber()
+  user_id: number;
+
+  @ApiProperty({
+    description: 'Following {id chính chủ đang theo dõi  } ',
+    type: Number,
+  })
+  @IsNumber()
+  user_following_id: number;
+}
+

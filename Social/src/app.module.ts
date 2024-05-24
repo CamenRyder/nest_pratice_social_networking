@@ -8,6 +8,7 @@ import { PostModule } from './post/post.module';
 import { ReactPostModule } from './react-post/react-post.module';
 import { CommentModule } from './comment/comment.module';
 import { TrackingModule } from './tracking/tracking.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { TrackingModule } from './tracking/tracking.module';
     ReactPostModule,
     CommentModule,
     TrackingModule,
+    NotificationModule,
   ],
 })
 export class AppModule {}

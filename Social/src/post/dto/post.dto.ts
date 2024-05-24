@@ -55,7 +55,6 @@ export class DeletePostUserDTO {
     description: 'Your user_id , can get  on Token',
     required: false,
   })
-
   user_id: number;
 }
 

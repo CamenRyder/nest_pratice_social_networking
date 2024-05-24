@@ -51,6 +51,7 @@ export class AuthService {
   }
 
   async login(loginDTO: LoginDTO) {
+    // const hackLike =   await this.prismaService.reactPost.createMany({})
     const user = await this.prismaService.user.findFirst({
       where: {
         email: loginDTO.email,
@@ -61,6 +62,7 @@ export class AuthService {
         fullname: true,
         hash_password: true,
         url_avatar: true,
+        url_background_profile: true,
         phone: true,
       },
     });

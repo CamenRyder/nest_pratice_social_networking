@@ -54,9 +54,9 @@ export class UserController {
     return this.userService.userInfor(Number(data['user_id']));
   }
 
-  @Post('yours/:user_id')
-  @ApiOkResponse({type: Response_UserInfo})
-  yours(@Body() data: InforByUserId) {  
+  @Post('yours')
+  @ApiOkResponse({ type: Response_UserInfo })
+  yours(@Body() data: InforByUserId) {
     return this.userService.userInforByUserId(data);
     // bi chiem port roi :>
     // Ua the xem swagger co thay doi gi hem. Hay can build lai
@@ -142,8 +142,6 @@ export class UserController {
       throw new HttpException('Lỗi BE', 500);
     }
   }
-
-
 
   @ApiBearerAuth()
   @UseGuards(MyJwtGuard)

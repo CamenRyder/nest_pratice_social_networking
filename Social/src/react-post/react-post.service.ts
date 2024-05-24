@@ -66,14 +66,14 @@ export class ReactPostService {
   async removeReactPost(data: RemoveReactPostDTO) {
     try {
       var currentTime = new Date();
-      const dataQuery = this.prismaService.reactPost.findFirst({
+      const dataQuery = await this.prismaService.reactPost.findFirst({
         where: { post_id: data.post_id, user_id: data.user_id },
       });
       if (dataQuery == null)
         throw new ForbiddenException('Not found data {removeReactPost}');
-      const isDelete = this.prismaService.reactPost.delete({
+      const isDelete = await this.prismaService.reactPost.delete({
         where: {
-          react_post_id: (await dataQuery).react_post_id,
+          react_post_id:dataQuery.react_post_id,
         },
       });
       return {

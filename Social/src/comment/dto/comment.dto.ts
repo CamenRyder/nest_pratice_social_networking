@@ -19,7 +19,7 @@ export class UpdateCommentUserDTO {
   @IsString()
   description: string;
 
-  @ApiProperty({ type: 'string', format: 'binary' })
+  @ApiProperty({ type: 'string', format: 'binary' , required: false })
   fileUpload: any;
 }
 
@@ -36,17 +36,14 @@ export class AllCommentPostDTO {
   @ApiProperty({
     description: 'Post id to instance object',
     type: Number,
-    default: 24,
+    default: 135,
   })
-  @IsString()
   post_id: number;
 
   @ApiProperty({ description: 'Quanity of size ', type: Number, default: 10 })
-  @IsString()
   page_size: number;
 
   @ApiProperty({ description: 'Your content update', type: Number, default: 1 })
-  @IsString()
   page: number;
 }
 

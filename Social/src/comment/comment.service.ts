@@ -5,6 +5,7 @@ import {
   CreateCommentUserDTO,
   DeleteCommentPostDTO,
 } from './dto/comment.dto';
+import { log } from 'console';
 
 @Injectable()
 export class CommentService {
@@ -120,6 +121,8 @@ export class CommentService {
             post_id: Number(post_id),
           },
         });
+        console.log('Into here :b ');
+        console.log(imageDelete)
         await this.prismaService.postImage.delete({
           where: {
             post_image_id: imageDelete.post_image_id,
@@ -131,6 +134,7 @@ export class CommentService {
             post_id: Number(post_id),
           },
         });
+        console.log('create image service successful');
 
         if (imageCreate == null) {
           throw new ForbiddenException('Check some param {postService}');
@@ -167,7 +171,7 @@ export class CommentService {
     }
   }
 
-  async getPostFromPost(CommentFormUserDTO: AllCommentPostDTO) {
+  async getCommentFromPost(CommentFormUserDTO: AllCommentPostDTO) {
     try {
       var currentTime = new Date();
 
@@ -179,8 +183,8 @@ export class CommentService {
           date_create_post: 'desc',
         },
         where: {
-          post_id: CommentFormUserDTO.post_id,
-          post_type_id: 2,
+          post_top_id: CommentFormUserDTO.post_id,
+          // post_type_id: 2,
         },
         include: {
           User: true,
@@ -190,7 +194,10 @@ export class CommentService {
       data.forEach((element) => {
         element.date_create_post = new Date(
           Number(element.date_create_post),
-        ).toUTCString();
+        ).toLocaleString('en-US', {
+          timeZone: 'Asia/Ho_Chi_Minh',
+          hour12: false,
+        });
       });
       return {
         message: 'Update successful',

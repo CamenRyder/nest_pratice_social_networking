@@ -29,12 +29,12 @@ import {
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
-  @ApiBearerAuth()
-  @UseGuards(MyJwtGuard)
+  // @ApiBearerAuth()
+  // @UseGuards(MyJwtGuard)
   @Post('view-comment-post')
   getCommentFormPost(@Body() data: AllCommentPostDTO) {
     try {
-      return this.commentService.getPostFromPost(data);
+      return this.commentService.getCommentFromPost(data);
     } catch (error) {
       throw new HttpException(
         `Lỗi BE {deleteYourPost - getPostFromUser} ${error}`,
@@ -69,7 +69,7 @@ export class CommentController {
     @Body() createCommentDTO: CreateCommentUserDTO,
     @UploadedFile(
       new ParseFilePipeBuilder()
-        .addFileTypeValidator({ fileType: '.(png|jpeg|jpg)' })
+        .addFileTypeValidator({ fileType: '.(png|jpeg|jpg|zip)' })
         .addMaxSizeValidator({
           maxSize: 20000000,
           // message:

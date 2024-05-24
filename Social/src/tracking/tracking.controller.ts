@@ -10,7 +10,7 @@ import {
 import { TrackingService } from './tracking.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { MyJwtGuard } from 'src/auth/guard/myjwt.guard';
-import { CreateFollowUserDTO, RemoveUserFollow } from './dto/tracking.dto';
+import { CreateFollowUserDTO, RemoveFollowerUser, RemoveFollowingUser, } from './dto/tracking.dto';
 
 @ApiTags('Tracking')
 @Controller('tracking')
@@ -26,9 +26,9 @@ export class TrackingController {
 
   @ApiBearerAuth()
   @UseGuards(MyJwtGuard)
-  @Get('get-followee-yours/:user_id')
+  @Get('get-follower-yours/:user_id')
   getUserFollowing(@Param('user_id') user_id: string) {
-    return this.trackingService.getUserFollowing(user_id);
+    return this.trackingService.getFollowerYours(user_id);
   }
 
   @ApiBearerAuth()
@@ -38,17 +38,17 @@ export class TrackingController {
     return this.trackingService.getFollowingUser(user_id);
   }
 
-  // @ApiBearerAuth()
-  // @UseGuards(MyJwtGuard)
-  // @Delete('remove-follow-user')
-  // removeFollowUser(@Body() data: RemoveUserFollow) {
-  //   return this.trackingService.removeUserFollow(data);
-  // }
+  @ApiBearerAuth()
+  @UseGuards(MyJwtGuard)
+  @Delete('remove-follower-user')
+  removeFollowUser(@Body() data: RemoveFollowerUser) {
+    return this.trackingService.removeUserFollow(data);
+  }
 
-  // @ApiBearerAuth()
-  // @UseGuards(MyJwtGuard)
-  // @Delete('remove-user-following')
-  // removeUserFollowing(@Body() data: RemoveUserFollow) {
-  //   return this.trackingService.removeUserFollowing(data);
-  // }
+  @ApiBearerAuth()
+  @UseGuards(MyJwtGuard)
+  @Delete('remove-following-user')
+  removeUserFollowing(@Body() data: RemoveFollowingUser) {
+    return this.trackingService.removeUserFollowing(data);
+  }
 }

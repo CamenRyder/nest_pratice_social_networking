@@ -467,13 +467,19 @@ export class UserService {
       }
     }
     user.url_avatar = url2;
-    await this.prismaService.user.update({
+   const abcda =  await this.prismaService.user.update({
       data: user,
       where: {
         user_id: Number(userId),
       },
     });
-
+    const currentDate = new Date();
+    return {
+      statusCode: 200,
+      message: 'Update avatar profile successful !',
+      dateTime: currentDate.toLocaleString(),
+      data: abcda,
+    };
     return 'Upload thành công !';
   }
 
@@ -485,13 +491,13 @@ export class UserService {
     });
     const substringToRemove = 'http://camenryder.xyz/';
     // const url1 = 'http://localhost:8888/public/img/' + imgName;
-    const url2 = 'http://camenryder.xyz/public/img/' + imgName;
+    const url3 = 'http://camenryder.xyz/public/img/' + imgName;
     if (user.url_background_profile != null) {
       if (
         user.url_background_profile !=
-        'http://camenryder.xyz/public/img/avatar_default.png'
+        'http://camenryder.xyz/public/img/background_profile_default.jpg'
       ) {
-        const filePath = user.url_avatar.replace(substringToRemove, '');
+        const filePath = user.url_background_profile.replace(substringToRemove, '');
         fs.unlink(filePath, (err) => {
           if (err) {
             throw new ForbiddenException('Old file avatar couldnt delete');
@@ -499,7 +505,7 @@ export class UserService {
         });
       }
     }
-    user.url_background_profile = url2;
+    user.url_background_profile = url3;
     const data = await this.prismaService.user.update({
       data: user,
       where: {
