@@ -9,6 +9,7 @@ import { ReactPostModule } from './react-post/react-post.module';
 import { CommentModule } from './comment/comment.module';
 import { TrackingModule } from './tracking/tracking.module';
 import { NotificationModule } from './notification/notification.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { NotificationModule } from './notification/notification.module';
     CommentModule,
     TrackingModule,
     NotificationModule,
+    AdminModule,
   ],
 })
 export class AppModule {}

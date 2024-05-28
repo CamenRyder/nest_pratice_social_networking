@@ -15,6 +15,7 @@ export class AuthService {
 
   async register(registerDTO: RegisterDTO): Promise<any> {
     try {
+      const currentTime = new Date();
       const haveData = await this.prismaService.user.findFirst({
         where: {
           email: registerDTO.email,
@@ -23,6 +24,7 @@ export class AuthService {
       if (haveData) {
         throw new ForbiddenException('Email has signed up');
       }
+
       const hasedPassword = await argon.hash(registerDTO.password);
       const user = await this.prismaService.user.create({
         data: {
@@ -30,12 +32,25 @@ export class AuthService {
           hash_password: hasedPassword,
           fullname: registerDTO.fullname,
           role_id: 1,
+          date_create_account: currentTime.toLocaleString('en-US', {
+            timeZone: 'Asia/Ho_Chi_Minh',
+            hour12: false,
+          }),
         },
         // select: { user_id: true, email: true, hash_password: false },
         include: {
           Post: true,
           Follower_Follower_following_user_idToUser: true,
           Follower_Follower_user_idToUser: true,
+        },
+      });
+      
+      await this.prismaService.notification.create({
+        data: {
+          user_id: user.user_id,
+          title: `Đăng kí thành công`,
+          description: `Chào mừng user ${user.fullname} đến với social food`,
+          date: Date.now().toString(),
         },
       });
       return {

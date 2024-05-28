@@ -68,6 +68,7 @@ model Notification {
   description String? @db.VarChar(400)
   is_seen     Int?    @default(0)
   user_id     Int
+  title       String? @db.VarChar(200)
   User        User    @relation(fields: [user_id], references: [user_id], onDelete: Cascade, map: "Notification_ibfk_1")
 
   @@index([user_id], map: "user_id")
@@ -169,6 +170,7 @@ model User {
   phone                                     String?           @db.VarChar(400)
   mode_level_id                             Int?
   url_background_profile                    String?           @default("http://camenryder.xyz/public/img/background_profile_default.jpg") @db.VarChar(400)
+  date_create_account                       String?           @db.VarChar(400)
   BrowsingAccount                           BrowsingAccount[]
   Follower_Follower_following_user_idToUser Follower[]        @relation("Follower_following_user_idToUser")
   Follower_Follower_user_idToUser           Follower[]        @relation("Follower_user_idToUser")

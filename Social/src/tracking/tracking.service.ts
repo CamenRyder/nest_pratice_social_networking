@@ -53,8 +53,8 @@ export class TrackingService {
       const currentTime = new Date();
       const dataDelete = await this.prismaService.follower.findFirst({
         where: {
-          user_id: data.user_id,
-          following_user_id: data.user_follower_id,
+          user_id: data.user_follower_id,  // 
+          following_user_id: data.user_id, //
         },
       });
       const isDelete = await this.prismaService.follower.delete({
@@ -104,7 +104,7 @@ export class TrackingService {
           },
         },
       });
-      if (!isExist) {
+      if (isExist) {
         return {
           message: 'You have been following User, query successful',
           statusCode: 200,
@@ -120,12 +120,15 @@ export class TrackingService {
         };
       } else
         return {
-          message: 'Call BE with error if u see that :))',
+          message: 'No following yet',
           statusCode: 201,
           createAt: currentTime.toLocaleString('en-US', {
             timeZone: 'Asia/Ho_Chi_Minh',
             hour12: false,
           }),
+          data: {
+            total: 0,
+          },
         };
     } catch (err) {
       return {
@@ -142,7 +145,7 @@ export class TrackingService {
           following_user_id: Number(user_id),
         },
         include: {
-          User_Follower_following_user_idToUser: {
+          User_Follower_user_idToUser: {
             select: {
               fullname: true,
               url_avatar: true,
@@ -151,7 +154,7 @@ export class TrackingService {
           },
         },
       });
-      if (!isExist) {
+      if (isExist) {
         return {
           message: 'User have been following u, query successful',
           statusCode: 200,
@@ -167,12 +170,15 @@ export class TrackingService {
         };
       } else
         return {
-          message: 'Call BE with error if u see that :))',
+          message: 'Chưa có người theo dõi',
           statusCode: 201,
           createAt: currentTime.toLocaleString('en-US', {
             timeZone: 'Asia/Ho_Chi_Minh',
             hour12: false,
           }),
+          data: {
+            total: 0,
+          },
         };
     } catch (err) {
       return {
@@ -190,13 +196,37 @@ export class TrackingService {
           following_user_id: data.user_follower_id,
         },
       });
-      if (!isExist) {
+      if (isExist) {
+        const notification = await Promise.all([
+          this.prismaService.user.findUnique({
+            where: {
+              user_id: data.user_follower_id,
+            },
+          }),
+          this.prismaService.user.findUnique({
+            where: {
+              user_id: data.user_id,
+            },
+          }),
+        ]);
+        const userNotifyCation = notification[0];
+        const userContact = notification[1];
+        await this.prismaService.notification.create({
+          data: {
+            user_id: userNotifyCation.user_id,
+            title: `1 người theo dõi mới`,
+            description: `${userContact.fullname} đã theo dõi bạn.`,
+            date: Date.now().toString(),
+          },
+        });
+
         const createFollowUser = await this.prismaService.follower.create({
           data: {
             user_id: data.user_id,
             following_user_id: data.user_follower_id,
           },
         });
+
         return {
           message: 'Followed user successful',
           statusCode: 200,

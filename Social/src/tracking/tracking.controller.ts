@@ -10,7 +10,11 @@ import {
 import { TrackingService } from './tracking.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { MyJwtGuard } from 'src/auth/guard/myjwt.guard';
-import { CreateFollowUserDTO, RemoveFollowerUser, RemoveFollowingUser, } from './dto/tracking.dto';
+import {
+  CreateFollowUserDTO,
+  RemoveFollowerUser,
+  RemoveFollowingUser,
+} from './dto/tracking.dto';
 
 @ApiTags('Tracking')
 @Controller('tracking')

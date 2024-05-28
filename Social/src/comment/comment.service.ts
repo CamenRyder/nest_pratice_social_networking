@@ -5,7 +5,6 @@ import {
   CreateCommentUserDTO,
   DeleteCommentPostDTO,
 } from './dto/comment.dto';
-import { log } from 'console';
 
 @Injectable()
 export class CommentService {
@@ -17,9 +16,10 @@ export class CommentService {
     data: CreateCommentUserDTO,
   ) {
     try {
+      console.log('Into hereee? on your casse  ? ');
       var currentTime = new Date();
       var noeww = Date.now();
-      //   await this.deleteImageFormPostImage();
+
       const commentCreated = await this.prismaService.post.create({
         data: {
           user_id: Number(userId),
@@ -30,6 +30,41 @@ export class CommentService {
         },
       });
       delete commentCreated.date_create_post;
+      const postOwner = await this.prismaService.post.findUnique({
+        where: {
+          post_id: Number(data.post_top_id),
+        },
+        include: {
+          User: {
+            select: {
+              user_id: true,
+            },
+          },
+        },
+      });
+      const notification = await Promise.all([
+        this.prismaService.user.findUnique({
+          where: {
+            user_id: postOwner.User.user_id,
+          },
+        }),
+        this.prismaService.user.findUnique({
+          where: {
+            user_id: Number(userId),
+          },
+        }),
+      ]);
+      const userNotifyCation = notification[0];
+      const userContact = notification[1];
+      await this.prismaService.notification.create({
+        data: {
+          user_id: userNotifyCation.user_id,
+          title: `1 Bình luận mới`,
+          description: `${userContact.fullname} đã bình luận vào bài viết của bạn.`,
+          date: Date.now().toString(),
+        },
+      });
+
       if (imgName != '') {
         const url2 = 'http://camenryder.xyz/public/img/' + imgName;
         const imageCreate = await this.prismaService.postImage.create({
@@ -122,7 +157,7 @@ export class CommentService {
           },
         });
         console.log('Into here :b ');
-        console.log(imageDelete)
+        console.log(imageDelete);
         await this.prismaService.postImage.delete({
           where: {
             post_image_id: imageDelete.post_image_id,

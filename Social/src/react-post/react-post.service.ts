@@ -9,7 +9,6 @@ import {
 @Injectable()
 export class ReactPostService {
   constructor(private prismaService: PrismaService) {}
-
   async reactPost(data: ReactPostDTO) {
     try {
       var currentTime = new Date();
@@ -45,6 +44,44 @@ export class ReactPostService {
           },
         },
       });
+
+      const postOwner = await this.prismaService.post.findUnique({
+        where: {
+          post_id: Number(data.post_id),
+        },
+        include: {
+          User: {
+            select: {
+              user_id: true,
+            },
+          },
+        },
+      });
+
+      const notification = await Promise.all([
+        this.prismaService.user.findUnique({
+          where: {
+            user_id: postOwner.User.user_id,
+          },
+        }),
+        this.prismaService.user.findUnique({
+          where: {
+            user_id: Number(data.user_id),
+          },
+        }),
+        this.prismaService.post,
+      ]);
+      const userNotifyCation = notification[0];
+      const userContact = notification[1];
+      await this.prismaService.notification.create({
+        data: {
+          user_id: userNotifyCation.user_id,
+          title: `1 cảm xúc mới`,
+          description: `${userContact.fullname} đã thả 1 cảm xúc vào bài viết của bạn.`,
+          date: Date.now().toString(),
+        },
+      });
+
       return {
         message: 'React post successful',
         statusCode: 200,
@@ -73,7 +110,7 @@ export class ReactPostService {
         throw new ForbiddenException('Not found data {removeReactPost}');
       const isDelete = await this.prismaService.reactPost.delete({
         where: {
-          react_post_id:dataQuery.react_post_id,
+          react_post_id: dataQuery.react_post_id,
         },
       });
       return {

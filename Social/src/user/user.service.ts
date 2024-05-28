@@ -42,6 +42,9 @@ export class UserService {
           email: true,
           url_avatar: true,
           url_background_profile: true,
+          country: true,
+          gender: true,
+          language: true,
         },
       });
 
@@ -296,6 +299,9 @@ export class UserService {
           email: true,
           url_avatar: true,
           url_background_profile: true,
+          country: true,
+          gender: true,
+          language: true,
         },
       });
 
@@ -389,6 +395,7 @@ export class UserService {
       dataUpdate.fullname = data.fullname ?? user.fullname;
       dataUpdate.country = data.country ?? user.country;
       dataUpdate.gender = data.gender ?? user.gender;
+      // dataUpdate.gender = null;
       dataUpdate.language = data.language ?? user.language;
       const isUpdate = await this.prismaService.user.update({
         where: { user_id: id },
@@ -467,7 +474,7 @@ export class UserService {
       }
     }
     user.url_avatar = url2;
-   const abcda =  await this.prismaService.user.update({
+    const abcda = await this.prismaService.user.update({
       data: user,
       where: {
         user_id: Number(userId),
@@ -497,7 +504,10 @@ export class UserService {
         user.url_background_profile !=
         'http://camenryder.xyz/public/img/background_profile_default.jpg'
       ) {
-        const filePath = user.url_background_profile.replace(substringToRemove, '');
+        const filePath = user.url_background_profile.replace(
+          substringToRemove,
+          '',
+        );
         fs.unlink(filePath, (err) => {
           if (err) {
             throw new ForbiddenException('Old file avatar couldnt delete');

@@ -18,11 +18,14 @@ export class NotificationController {
   @Get('get-new-notification/:user_id')
   @ApiBearerAuth()
   @UseGuards(MyJwtGuard)
-  getNotificationByUserId(@Param('user_id') user_id: string) {
+  getNewtNotificationByUserId(@Param('user_id') user_id: string) {
     try {
+      return this.notificationService.getNewtNotificationByUserId(
+        Number(user_id),
+      );
     } catch (err) {
       throw new HttpException(
-        `Lỗi BE {${this.notificationService} - ReactPostController} ${err}`,
+        `Lỗi BE {${this.notificationService} - get-new-notification} ${err}`,
         500,
       );
     }
@@ -31,12 +34,14 @@ export class NotificationController {
   @Get('get-all-notification/:user_id')
   @ApiBearerAuth()
   @UseGuards(MyJwtGuard)
-  getTotalReact(@Param('user_id') user_id: string) {
+  getAllNotification(@Param('user_id') user_id: string) {
     try {
-      return 'Tối t7 có';
+      return this.notificationService.getAllNotificationByUserId(
+        Number(user_id),
+      );
     } catch (err) {
       throw new HttpException(
-        `Lỗi BE {${this.notificationService} - ReactPostController} ${err}`,
+        `Lỗi BE {${this.notificationService} - get-all-notification} ${err}`,
         500,
       );
     }
@@ -45,12 +50,26 @@ export class NotificationController {
   @Post('read-notification/:notification_id')
   @ApiBearerAuth()
   @UseGuards(MyJwtGuard)
-  readtNotification(@Param('user_id') user_id: string) {
+  readtNotification(@Param('notification_id') notification_id: string) {
     try {
-      return 'Tối t7 cos';
+      return this.notificationService.readNotification(Number(notification_id));
     } catch (err) {
       throw new HttpException(
-        `Lỗi BE {${this.notificationService} - ReactPostController} ${err}`,
+        `Lỗi BE {${this.notificationService} - read-notificatio} ${err}`,
+        500,
+      );
+    }
+  }
+
+  @Post('read-all-notification/:user_id')
+  @ApiBearerAuth()
+  @UseGuards(MyJwtGuard)
+  readAllNotification(@Param('user_id') user_id: string) {
+    try {
+      return this.notificationService.readAllNotification(Number(user_id));
+    } catch (err) {
+      throw new HttpException(
+        `Lỗi BE {${this.notificationService} - read-all-notification} ${err}`,
         500,
       );
     }
