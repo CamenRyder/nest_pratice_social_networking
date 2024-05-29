@@ -63,30 +63,40 @@ model Issues {
 }
 
 model Notification {
-  noti_id     Int     @id @default(autoincrement())
-  date        String? @db.VarChar(200)
-  description String? @db.VarChar(400)
-  is_seen     Int?    @default(0)
-  user_id     Int
-  title       String? @db.VarChar(200)
-  User        User    @relation(fields: [user_id], references: [user_id], onDelete: Cascade, map: "Notification_ibfk_1")
+  noti_id                                Int                @id @default(autoincrement())
+  date                                   String?            @db.VarChar(200)
+  description                            String?            @db.VarChar(400)
+  is_seen                                Int?               @default(0)
+  user_id                                Int
+  title                                  String?            @db.VarChar(200)
+  post_id                                Int?
+  user_action_id                         Int?
+  Noti_type_id                           Int?
+  User                                   User               @relation(fields: [user_id], references: [user_id], onDelete: Cascade, map: "Notification_ibfk_1")
+  Post                                   Post?              @relation(fields: [post_id], references: [post_id], onDelete: NoAction, onUpdate: NoAction, map: "Notification_ibfk_2")
+  User_Notification_user_action_idToUser User?              @relation("Notification_user_action_idToUser", fields: [user_action_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "Notification_ibfk_3")
+  Notification_type                      Notification_type? @relation(fields: [Noti_type_id], references: [noti_type_id], onDelete: NoAction, onUpdate: NoAction, map: "Notification_ibfk_4")
 
   @@index([user_id], map: "user_id")
+  @@index([Noti_type_id], map: "Noti_type_id")
+  @@index([post_id], map: "post_id")
+  @@index([user_action_id], map: "user_action_id")
 }
 
 model Post {
-  post_id          Int         @id @default(autoincrement())
+  post_id          Int            @id @default(autoincrement())
   user_id          Int?
   post_type_id     Int?
   post_top_id      Int?
-  description      String?     @db.Text
+  description      String?        @db.Text
   rating           Float?
-  date_create_post String?     @db.VarChar(100)
-  diner_address    String?     @db.VarChar(280)
-  diner_name       String?     @db.VarChar(280)
+  date_create_post String?        @db.VarChar(100)
+  diner_address    String?        @db.VarChar(280)
+  diner_name       String?        @db.VarChar(280)
   Dish             Dish[]
-  User             User?       @relation(fields: [user_id], references: [user_id], onUpdate: SetNull, map: "Post_ibfk_5")
-  PostType         PostType?   @relation(fields: [post_type_id], references: [post_type_id], onUpdate: SetNull, map: "Post_ibfk_7")
+  Notification     Notification[]
+  User             User?          @relation(fields: [user_id], references: [user_id], onUpdate: SetNull, map: "Post_ibfk_5")
+  PostType         PostType?      @relation(fields: [post_type_id], references: [post_type_id], onUpdate: SetNull, map: "Post_ibfk_7")
   PostImage        PostImage[]
   Rating           Rating[]
   ReactPost        ReactPost[]
@@ -158,30 +168,31 @@ model Role {
 }
 
 model User {
-  user_id                                   Int               @id @default(autoincrement())
-  email                                     String            @db.VarChar(400)
-  hash_password                             String?           @db.VarChar(400)
-  fullname                                  String?           @db.VarChar(400)
-  gender                                    Int?              @default(0)
-  country                                   String?           @db.VarChar(400)
-  language                                  String?           @db.VarChar(400)
-  url_avatar                                String?           @default("http://camenryder.xyz/public/img/avatar_default.png") @db.VarChar(400)
-  role_id                                   Int?
-  phone                                     String?           @db.VarChar(400)
-  mode_level_id                             Int?
-  url_background_profile                    String?           @default("http://camenryder.xyz/public/img/background_profile_default.jpg") @db.VarChar(400)
-  date_create_account                       String?           @db.VarChar(400)
-  BrowsingAccount                           BrowsingAccount[]
-  Follower_Follower_following_user_idToUser Follower[]        @relation("Follower_following_user_idToUser")
-  Follower_Follower_user_idToUser           Follower[]        @relation("Follower_user_idToUser")
-  Invoice                                   Invoice[]
-  Notification                              Notification[]
-  Post                                      Post[]
-  Rating                                    Rating[]
-  ReactPost                                 ReactPost[]
-  Report                                    Report[]
-  Role                                      Role?             @relation(fields: [role_id], references: [role_id], onDelete: NoAction, onUpdate: NoAction, map: "User_ibfk_1")
-  Moderator_level                           Moderator_level?  @relation(fields: [mode_level_id], references: [mode_level_id], onDelete: NoAction, onUpdate: NoAction, map: "User_ibfk_2")
+  user_id                                        Int               @id @default(autoincrement())
+  email                                          String            @db.VarChar(400)
+  hash_password                                  String?           @db.VarChar(400)
+  fullname                                       String?           @db.VarChar(400)
+  gender                                         Int?              @default(0)
+  country                                        String?           @db.VarChar(400)
+  language                                       String?           @db.VarChar(400)
+  url_avatar                                     String?           @default("http://camenryder.xyz/public/img/avatar_default.png") @db.VarChar(400)
+  role_id                                        Int?
+  phone                                          String?           @db.VarChar(400)
+  mode_level_id                                  Int?
+  url_background_profile                         String?           @default("http://camenryder.xyz/public/img/background_profile_default.jpg") @db.VarChar(400)
+  date_create_account                            String?           @db.VarChar(400)
+  BrowsingAccount                                BrowsingAccount[]
+  Follower_Follower_following_user_idToUser      Follower[]        @relation("Follower_following_user_idToUser")
+  Follower_Follower_user_idToUser                Follower[]        @relation("Follower_user_idToUser")
+  Invoice                                        Invoice[]
+  Notification                                   Notification[]
+  Notification_Notification_user_action_idToUser Notification[]    @relation("Notification_user_action_idToUser")
+  Post                                           Post[]
+  Rating                                         Rating[]
+  ReactPost                                      ReactPost[]
+  Report                                         Report[]
+  Role                                           Role?             @relation(fields: [role_id], references: [role_id], onDelete: NoAction, onUpdate: NoAction, map: "User_ibfk_1")
+  Moderator_level                                Moderator_level?  @relation(fields: [mode_level_id], references: [mode_level_id], onDelete: NoAction, onUpdate: NoAction, map: "User_ibfk_2")
 
   @@index([role_id], map: "role_id")
   @@index([mode_level_id], map: "mode_level_id")
@@ -211,4 +222,10 @@ model Moderator_level {
   name_mod_level    String @db.VarChar(400)
   description_level String @db.VarChar(400)
   User              User[]
+}
+
+model Notification_type {
+  noti_type_id   Int            @id @default(autoincrement())
+  noti_type_name String         @db.VarChar(200)
+  Notification   Notification[]
 }
