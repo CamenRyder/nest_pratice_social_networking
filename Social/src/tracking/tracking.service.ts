@@ -53,7 +53,7 @@ export class TrackingService {
       const currentTime = new Date();
       const dataDelete = await this.prismaService.follower.findFirst({
         where: {
-          user_id: data.user_follower_id,  // 
+          user_id: data.user_follower_id, //
           following_user_id: data.user_id, //
         },
       });
@@ -62,6 +62,7 @@ export class TrackingService {
           follow_id: dataDelete.follow_id,
         },
       });
+      
       if (isDelete) {
         return {
           message: 'Deleted successful',
@@ -211,14 +212,41 @@ export class TrackingService {
         ]);
         const userNotifyCation = notification[0];
         const userContact = notification[1];
-        await this.prismaService.notification.create({
-          data: {
+        const isNotified = await this.prismaService.notification.findFirst({
+          where: {
             user_id: userNotifyCation.user_id,
-            title: `1 người theo dõi mới`,
-            description: `${userContact.fullname} đã theo dõi bạn.`,
-            date: Date.now().toString(),
+            Noti_type_id: 4,
+            user_action_id: userContact.user_id,
           },
         });
+        if (isNotified == null) {
+          await this.prismaService.notification.create({
+            data: {
+              user_id: userNotifyCation.user_id,
+              Noti_type_id: 4,
+              user_action_id: userContact.user_id,
+              title: `bạn có 1 người theo dõi mới`,
+              description: `${userContact.fullname} đã theo dõi bạn.`,
+              date: Date.now().toString(),
+            },
+          });
+        } else {
+          await this.prismaService.notification.delete({
+            where: {
+              noti_id: isNotified.noti_id,
+            },
+          });
+          await this.prismaService.notification.create({
+            data: {
+              user_id: userNotifyCation.user_id,
+              Noti_type_id: 4,
+              user_action_id: userContact.user_id,
+              title: `bạn có 1 người theo dõi mới`,
+              description: `${userContact.fullname} đã theo dõi bạn.`,
+              date: Date.now().toString(),
+            },
+          });
+        }
 
         const createFollowUser = await this.prismaService.follower.create({
           data: {

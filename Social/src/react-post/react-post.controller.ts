@@ -10,7 +10,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ReactPostService } from './react-post.service';
-import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { MyJwtGuard } from 'src/auth/guard/myjwt.guard';
 import {
   ChangeReactPostDTO,
@@ -24,8 +29,8 @@ export class ReactPostController {
   constructor(private readonly reactPostService: ReactPostService) {}
 
   @Get('get-total-react/:post_id')
-  @ApiOperation({summary: 'Tóm tắt api này làm gì nè'})
-  @ApiOkResponse({type: 'Trả về cái gì nè :>'})
+  @ApiOperation({ summary: 'Tóm tắt api này làm gì nè' })
+  @ApiOkResponse({ type: 'Trả về cái gì nè :>' })
   getTotalReact(@Param('post_id') postId: string) {
     //Params em cũng có thể viết dto đẻ thể hiện nó là dữ liệu gì nè
     try {

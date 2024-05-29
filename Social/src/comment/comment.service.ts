@@ -59,8 +59,11 @@ export class CommentService {
       await this.prismaService.notification.create({
         data: {
           user_id: userNotifyCation.user_id,
+          user_action_id: Number(userId),
+          post_id: data.post_top_id,
+          Noti_type_id: 3,
           title: `1 Bình luận mới`,
-          description: `${userContact.fullname} đã bình luận vào bài viết của bạn.`,
+          description: `${userContact.fullname} đã bình luận vào bài viết "${postOwner.description}" của bạn.`,
           date: Date.now().toString(),
         },
       });
@@ -118,6 +121,35 @@ export class CommentService {
         },
       });
       if (isDelete) {
+        const postOwner = await this.prismaService.post.findUnique({
+          where: {
+            post_id: Number(data.post_id),
+          },
+          include: {
+            User: {
+              select: {
+                user_id: true,
+              },
+            },
+          },
+        });
+        const isNotify = await this.prismaService.notification.findFirst({
+          where: {
+            post_id: Number(data.post_id),
+            user_action_id: Number(data.user_id),
+            Noti_type_id: 4,
+            user_id: postOwner.User.user_id,
+          },
+        });
+
+        if (isNotify != null) {
+          await this.prismaService.notification.delete({
+            where: {
+              noti_id: isNotify.noti_id,
+            },
+          });
+        }
+
         return {
           message: 'Delete successful',
           statusCode: 200,
