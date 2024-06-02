@@ -57,7 +57,7 @@ export class CommentService {
       const userNotifyCation = notification[0];
       const userContact = notification[1];
       await this.prismaService.notification.create({
-        data: {
+        data: { // lỗi
           user_id: userNotifyCation.user_id,
           user_action_id: Number(userId),
           post_id: data.post_top_id,

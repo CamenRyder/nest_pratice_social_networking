@@ -79,6 +79,7 @@ export class AuthService {
         url_avatar: true,
         url_background_profile: true,
         phone: true,
+        role_id:true,
       },
     });
     if (!user) {

@@ -219,7 +219,7 @@ export class PostService {
         },
         where: {
           user_id: PostFormUserDTO.user_id,
-          post_type_id: 1 ,
+          post_type_id: 1,
         },
         include: {
           User: {
@@ -322,8 +322,8 @@ export class PostService {
         orderBy: {
           date_create_post: 'desc',
         },
-        where:{
-          post_type_id: 1 ,
+        where: {
+          post_type_id: 1,
         },
         include: {
           User: true,
@@ -347,6 +347,20 @@ export class PostService {
       });
 
       const dataW = await Promise.all(commentPromises);
+
+      const dataCount = await Promise.all([
+        this.prismaService.post.count({
+          where: {
+            post_type_id: 1,
+          },
+        }),
+        this.prismaService.post.count({
+          where: {
+            post_type_id: 3,
+          },
+        }),
+      ]);
+      const total = dataCount[0] + dataCount[1];
       return {
         message: 'Update successful',
         statusCode: 200,
@@ -355,6 +369,7 @@ export class PostService {
           hour12: false,
         }),
         data: dataW,
+        total: total,
       };
     } catch (error) {
       return {
