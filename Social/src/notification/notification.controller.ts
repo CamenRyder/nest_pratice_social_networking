@@ -15,21 +15,6 @@ import { MyJwtGuard } from 'src/auth/guard/myjwt.guard';
 @Controller('notification')
 export class NotificationController {
   constructor(private readonly notificationService: NotificationService) {}
-  // @Get('get-new-notification/:user_id')
-  // @ApiBearerAuth()
-  // @UseGuards(MyJwtGuard)
-  // getNewtNotificationByUserId(@Param('user_id') user_id: string) {
-  //   try {
-  //     return this.notificationService.getNewtNotificationByUserId(
-  //       Number(user_id),
-  //     );
-  //   } catch (err) {
-  //     throw new HttpException(
-  //       `Lỗi BE {${this.notificationService} - get-new-notification} ${err}`,
-  //       500,
-  //     );
-  //   }
-  // }
 
   @Get('get-all-notification/:user_id')
   @ApiBearerAuth()

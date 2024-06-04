@@ -9,7 +9,7 @@ export class AdminController {
   @Get('view-list-user-waiting-to-accept')
   viewListUSerWaitingToAccept() {
     try {
-      // return this.adminService.getCommentFromPost(data);
+      return this.adminService.getCommentFromPost(data);
       return "Tối t4 có"
     } catch (error) {
       throw new HttpException(

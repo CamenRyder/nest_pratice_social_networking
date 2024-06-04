@@ -65,12 +65,10 @@ export class ReportPostDTO {
   post_id: number;
 
   @ApiProperty({
-    type: Number,
+    type: [Number],
     description: 'Problem u want report post',
   })
-  @IsNumber()
-  @IsNotEmpty()
-  issue_id: number;
+  issue_id: [number];
 
   @ApiProperty({
     type: Number,

@@ -6,6 +6,7 @@ import {
   PostFromUserDTO,
   ReportPostDTO,
 } from './dto/post.dto';
+import { log } from 'console';
 const fs = require('fs');
 
 @Injectable()
@@ -158,24 +159,48 @@ export class PostService {
 
   async deletePost(data: DeletePostUserDTO) {
     try {
-      const isDelete = await this.prismaService.post.delete({
+      const deleteNoti = await this.prismaService.notification.deleteMany({
         where: {
           post_id: Number(data.post_id),
-          user_id: Number(data.user_id),
         },
       });
-      if (isDelete) {
-        return {
-          message: 'Delete successful',
-          statusCode: 200,
-          createAt: new Date().toLocaleString('en-US', {
-            timeZone: 'Asia/Ho_Chi_Minh',
-            hour12: false,
-          }),
-          data: {
-            isDelete,
+
+      if (deleteNoti) {
+       
+        const totalReported = await this.prismaService.report.findMany({
+          where: {
+            post_id: data.post_id,
           },
-        };
+        });
+  
+        totalReported.forEach(async (element) => {
+            await this.prismaService.report.delete({
+              where: {
+               report_id: element['report_id'] 
+              }
+            })
+        });
+
+        const isDelete = await this.prismaService.post.delete({
+          where: {
+            post_id: Number(data.post_id),
+            user_id: Number(data.user_id),
+          },
+        });
+
+        if (isDelete) {
+          return {
+            message: 'Delete successful',
+            statusCode: 200,
+            createAt: new Date().toLocaleString('en-US', {
+              timeZone: 'Asia/Ho_Chi_Minh',
+              hour12: false,
+            }),
+            data: {
+              isDelete,
+            },
+          };
+        }
       } else {
         throw new ForbiddenException('Bạn ko đc quyền xóa post');
       }
@@ -276,24 +301,25 @@ export class PostService {
           post_id: data.post_id,
         },
       });
-      if (totalReported.length > 4)
-        throw new ForbiddenException('Your limit 5 report!');
-      const isReported = await this.prismaService.report.findFirst({
-        where: {
-          user_id: data.user_id,
-          post_id: data.post_id,
-          issue_id: data.issue_id,
-        },
+
+      totalReported.forEach(async (element) => {
+          await this.prismaService.report.delete({
+            where: {
+             report_id: element['report_id'] 
+            }
+          })
       });
-      if (isReported) throw new ForbiddenException('User reported this issue!');
-      const dataQuery = await this.prismaService.report.create({
-        data: {
-          user_id: data.user_id,
-          post_id: data.post_id,
-          issue_id: data.issue_id,
-          dateReported: noeww.toString(),
-        },
-      });
+     data.issue_id.forEach( async (element) => {
+        await this.prismaService.report.create({
+          data: {
+            user_id: data.user_id,
+            post_id: data.post_id,
+            issue_id: element ,  
+            dateReported: noeww.toString(),
+          },
+        });
+      })
+      
       return {
         message: 'Report successful',
         statusCode: 200,
@@ -301,10 +327,7 @@ export class PostService {
           timeZone: 'Asia/Ho_Chi_Minh',
           hour12: false,
         }),
-        data: {
-          dataQuery,
-        },
-      };
+             };
     } catch (err) {
       return {
         messageError: err,

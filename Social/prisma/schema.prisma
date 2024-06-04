@@ -69,9 +69,9 @@ model Notification {
   is_seen                                Int?               @default(0)
   user_id                                Int
   title                                  String?            @db.VarChar(200)
+  Noti_type_id                           Int?
   post_id                                Int?
   user_action_id                         Int?
-  Noti_type_id                           Int?
   User                                   User               @relation(fields: [user_id], references: [user_id], onDelete: Cascade, map: "Notification_ibfk_1")
   Post                                   Post?              @relation(fields: [post_id], references: [post_id], onDelete: NoAction, onUpdate: NoAction, map: "Notification_ibfk_2")
   User_Notification_user_action_idToUser User?              @relation("Notification_user_action_idToUser", fields: [user_action_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "Notification_ibfk_3")
@@ -82,26 +82,30 @@ model Notification {
   @@index([post_id], map: "post_id")
   @@index([user_action_id], map: "user_action_id")
 }
-model Notification {
-  noti_id                                Int                @id @default(autoincrement())
-  date                                   String?            @db.VarChar(200)
-  description                            String?            @db.VarChar(400)
-  is_seen                                Int?               @default(0)
-  user_id                                Int
-  title                                  String?            @db.VarChar(200)
-  post_id                                Int?
-  user_action_id                         Int?
-  Noti_type_id                           Int?
-  User                                   User               @relation(fields: [user_id], references: [user_id], onDelete: Cascade, map: "Notification_ibfk_1")
-  Post                                   Post?              @relation(fields: [post_id], references: [post_id], onDelete: NoAction, onUpdate: NoAction, map: "Notification_ibfk_2")
-  User_Notification_user_action_idToUser User?              @relation("Notification_user_action_idToUser", fields: [user_action_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "Notification_ibfk_3")
-  Notification_type                      Notification_type? @relation(fields: [Noti_type_id], references: [noti_type_id], onDelete: NoAction, onUpdate: NoAction, map: "Notification_ibfk_4")
 
+model Post {
+  post_id          Int            @id @default(autoincrement())
+  user_id          Int?
+  post_type_id     Int?
+  post_top_id      Int?
+  description      String?        @db.Text
+  rating           Float?
+  date_create_post String?        @db.VarChar(100)
+  diner_address    String?        @db.VarChar(280)
+  diner_name       String?        @db.VarChar(280)
+  Dish             Dish[]
+  Notification     Notification[]
+  User             User?          @relation(fields: [user_id], references: [user_id], onUpdate: SetNull, map: "Post_ibfk_5")
+  PostType         PostType?      @relation(fields: [post_type_id], references: [post_type_id], onUpdate: SetNull, map: "Post_ibfk_7")
+  PostImage        PostImage[]
+  Rating           Rating[]
+  ReactPost        ReactPost[]
+  Report           Report[]
+
+  @@index([post_type_id], map: "post_type_id")
   @@index([user_id], map: "user_id")
-  @@index([Noti_type_id], map: "Noti_type_id")
-  @@index([post_id], map: "post_id")
-  @@index([user_action_id], map: "user_action_id")
 }
+
 model PostImage {
   post_image_id    Int     @id @default(autoincrement())
   url_image        String? @db.Text

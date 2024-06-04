@@ -232,12 +232,16 @@ export class UserService {
   async upgradeAccount(id: string) {
     try {
       const currentTime = new Date();
-      const isExist = this.prismaService.browsingAccount.findFirst({
+      const isExist = await this.prismaService.browsingAccount.findFirst({
         where: {
           user_id: Number(id),
         },
       });
-      if (!isExist || (await isExist).account_state_id == 2) {
+      console.log('Adsuuu ?');
+      
+      console.log(isExist);
+      
+      if (isExist==null) {
         const createdQueueAccount =
           await this.prismaService.browsingAccount.create({
             data: {
@@ -246,6 +250,10 @@ export class UserService {
               account_state_id: 1,
             },
           });
+          createdQueueAccount['create_at'] =  currentTime.toLocaleString('en-US', {
+            timeZone: 'Asia/Ho_Chi_Minh',
+            hour12: false,
+          }) ;
         return {
           message: 'Waiting system accept your request',
           statusCode: 200,
