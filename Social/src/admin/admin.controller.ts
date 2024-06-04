@@ -1,4 +1,4 @@
-import { Controller, Get, HttpException, Post } from '@nestjs/common';
+import { Controller, Get, HttpException, Post, Query } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { ApiTags } from '@nestjs/swagger';
 
@@ -6,14 +6,18 @@ import { ApiTags } from '@nestjs/swagger';
 @Controller('admin')
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
+
+
   @Get('view-list-user-waiting-to-accept')
-  viewListUSerWaitingToAccept() {
+  getPostsAllUser(
+    @Query('pageSize') pageSize: string,
+    @Query('page') page: string,
+  ) {
     try {
-      return this.adminService.getCommentFromPost(data);
-      return "Tối t4 có"
+      return this.adminService.getViewUserWaitingToAccept(Number(page), Number(pageSize));
     } catch (error) {
       throw new HttpException(
-        `Lỗi BE {deleteYourPost - getPostFromUser} ${error}`,
+        `Lỗi BE {getViewUserWaitingToAccept - adminController} ${error}`,
         500,
       );
     }
@@ -22,10 +26,12 @@ export class AdminController {
 
 
   @Get('view-list-report-waiting-to-accept')
-  viewListReportWaitingToAccept() {
+  viewListReportWaitingToAccept(
+    @Query('pageSize') pageSize: string,
+    @Query('page') page: string,
+  ) {
     try {
-      // return this.adminService.getCommentFromPost(data);
-      return "Tối t4 có"
+      return this.adminService.viewListReportWaitingToAccept(Number(page), Number(pageSize));
     } catch (error) {
       throw new HttpException(
         `Lỗi BE {deleteYourPost - getPostFromUser} ${error}`,
@@ -38,10 +44,10 @@ export class AdminController {
 
 
   @Get('view-list-reject-upgrade-to-restaurant')
-  viewListRejectToRestaurant() {
+  viewListRejectToRestaurant( @Query('pageSize') pageSize: string,
+  @Query('page') page: string,) {
     try {
-      // return this.adminService.getCommentFromPost(data);
-      return "Tối t4 có"
+      return this.adminService.viewListRejectToRestaurant(Number(page), Number(pageSize));
     } catch (error) {
       throw new HttpException(
         `Lỗi BE {deleteYourPost - getPostFromUser} ${error}`,
@@ -53,7 +59,7 @@ export class AdminController {
 
 
 
-  @Get('view-list-rejected-report-post')
+  @Get('view-list-ban-report-post')
     asdhakjhk() {
     try {
       // return this.adminService.getCommentFromPost(data);

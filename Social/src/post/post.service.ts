@@ -299,17 +299,18 @@ export class PostService {
         where: {
           user_id: data.user_id,
           post_id: data.post_id,
+
         },
       });
-
-      totalReported.forEach(async (element) => {
-          await this.prismaService.report.delete({
-            where: {
-             report_id: element['report_id'] 
-            }
-          })
+     totalReported.forEach(async (element) => {
+        await this.prismaService.report.delete({
+          where: {
+            report_id: element['report_id']
+          }
+        });
       });
-     data.issue_id.forEach( async (element) => {
+     data.issue_id.forEach( 
+      async (element) => {
         await this.prismaService.report.create({
           data: {
             user_id: data.user_id,
