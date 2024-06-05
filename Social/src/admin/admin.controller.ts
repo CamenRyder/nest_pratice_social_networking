@@ -93,10 +93,11 @@ export class AdminController {
   }
 
   @Post('accept-upgrade-account')
-  viewListReject() {
+  viewListReject(
+    @Query('user_id') user_id: string,
+  ) {
     try {
-      // return this.adminService.getCommentFromPost(data);
-      return 'Tối t4 có';
+      return this.adminService.acceptedAccountUpgrade(Number(user_id));
     } catch (error) {
       throw new HttpException(
         `Lỗi BE {deleteYourPost - getPostFromUser} ${error}`,
@@ -106,11 +107,12 @@ export class AdminController {
   }
 
   @Post('reject-upgrade-account')
-  iewListReject() {
+  rejectUpgradeAccount(
+    @Query('user_id') user_id: string,
+  ) {
     try {
-      // return this.adminService.getCommentFromPost(data);
-      return 'Tối t4 có';
-    } catch (error) {
+      return this.adminService.rejctedAccountUpgrade(Number(user_id))
+     } catch (error) {
       throw new HttpException(
         `Lỗi BE {deleteYourPost - getPostFromUser} ${error}`,
         500,
@@ -135,7 +137,7 @@ export class AdminController {
   iewListect() {
     try {
       // return this.adminService.getCommentFromPost(data);
-      return 'Tối t4 có';
+      // return 'Tối t4 có';
     } catch (error) {
       throw new HttpException(
         `Lỗi BE {deleteYourPost - getPostFromUser} ${error}`,
