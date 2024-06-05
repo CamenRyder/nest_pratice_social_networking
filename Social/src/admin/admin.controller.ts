@@ -7,14 +7,16 @@ import { ApiTags } from '@nestjs/swagger';
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
-
   @Get('view-list-user-waiting-to-accept')
   getPostsAllUser(
     @Query('pageSize') pageSize: string,
     @Query('page') page: string,
   ) {
     try {
-      return this.adminService.getViewUserWaitingToAccept(Number(page), Number(pageSize));
+      return this.adminService.getViewUserWaitingToAccept(
+        Number(page),
+        Number(pageSize),
+      );
     } catch (error) {
       throw new HttpException(
         `Lỗi BE {getViewUserWaitingToAccept - adminController} ${error}`,
@@ -23,15 +25,16 @@ export class AdminController {
     }
   }
 
-
-
   @Get('view-list-report-waiting-to-accept')
   viewListReportWaitingToAccept(
     @Query('pageSize') pageSize: string,
     @Query('page') page: string,
   ) {
     try {
-      return this.adminService.viewListReportWaitingToAccept(Number(page), Number(pageSize));
+      return this.adminService.viewListReportWaitingToAccept(
+        Number(page),
+        Number(pageSize),
+      );
     } catch (error) {
       throw new HttpException(
         `Lỗi BE {deleteYourPost - getPostFromUser} ${error}`,
@@ -39,15 +42,17 @@ export class AdminController {
       );
     }
   }
-
-
-
 
   @Get('view-list-reject-upgrade-to-restaurant')
-  viewListRejectToRestaurant( @Query('pageSize') pageSize: string,
-  @Query('page') page: string,) {
+  viewListRejectToRestaurant(
+    @Query('pageSize') pageSize: string,
+    @Query('page') page: string,
+  ) {
     try {
-      return this.adminService.viewListRejectToRestaurant(Number(page), Number(pageSize));
+      return this.adminService.viewListRejectToRestaurant(
+        Number(page),
+        Number(pageSize),
+      );
     } catch (error) {
       throw new HttpException(
         `Lỗi BE {deleteYourPost - getPostFromUser} ${error}`,
@@ -55,15 +60,12 @@ export class AdminController {
       );
     }
   }
-
-
-
 
   @Get('view-list-ban-report-post')
-    asdhakjhk() {
+  asdhakjhk() {
     try {
       // return this.adminService.getCommentFromPost(data);
-      return "Tối t4 có"
+      return 'Tối t4 có';
     } catch (error) {
       throw new HttpException(
         `Lỗi BE {deleteYourPost - getPostFromUser} ${error}`,
@@ -71,13 +73,17 @@ export class AdminController {
       );
     }
   }
-
 
   @Get('view-list-accepted-upgrade-account')
-  vieejectToRestaurant() {
+  viewListAcceptedUpgradeAccount(
+    @Query('pageSize') pageSize: string,
+    @Query('page') page: string,
+  ) {
     try {
-      // return this.adminService.getCommentFromPost(data);
-      return "Tối t4 có"
+      return this.adminService.viewListAcceptedUpgradeAccount(
+        Number(page),
+        Number(pageSize),
+      );
     } catch (error) {
       throw new HttpException(
         `Lỗi BE {deleteYourPost - getPostFromUser} ${error}`,
@@ -85,13 +91,12 @@ export class AdminController {
       );
     }
   }
-
 
   @Post('accept-upgrade-account')
   viewListReject() {
     try {
       // return this.adminService.getCommentFromPost(data);
-      return "Tối t4 có"
+      return 'Tối t4 có';
     } catch (error) {
       throw new HttpException(
         `Lỗi BE {deleteYourPost - getPostFromUser} ${error}`,
@@ -99,13 +104,12 @@ export class AdminController {
       );
     }
   }
-
 
   @Post('reject-upgrade-account')
   iewListReject() {
     try {
       // return this.adminService.getCommentFromPost(data);
-      return "Tối t4 có"
+      return 'Tối t4 có';
     } catch (error) {
       throw new HttpException(
         `Lỗi BE {deleteYourPost - getPostFromUser} ${error}`,
@@ -113,16 +117,12 @@ export class AdminController {
       );
     }
   }
-
-
-
-
 
   @Post('ban-post-user')
   viewLiReject() {
     try {
       // return this.adminService.getCommentFromPost(data);
-      return "Tối t4 có"
+      return 'Tối t4 có';
     } catch (error) {
       throw new HttpException(
         `Lỗi BE {deleteYourPost - getPostFromUser} ${error}`,
@@ -130,13 +130,12 @@ export class AdminController {
       );
     }
   }
-
 
   @Post('unlock-post-user')
   iewListect() {
     try {
       // return this.adminService.getCommentFromPost(data);
-      return "Tối t4 có"
+      return 'Tối t4 có';
     } catch (error) {
       throw new HttpException(
         `Lỗi BE {deleteYourPost - getPostFromUser} ${error}`,
@@ -145,15 +144,10 @@ export class AdminController {
     }
   }
 
-
-
-
-
-  
   viewListReportPost() {
     try {
       // return this.adminService.getCommentFromPost(data);
-      return "Tối t4 có"
+      return 'Tối t4 có';
     } catch (error) {
       throw new HttpException(
         `Lỗi BE {deleteYourPost - getPostFromUser} ${error}`,
