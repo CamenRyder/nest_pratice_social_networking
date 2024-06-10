@@ -1,4 +1,11 @@
-import { Controller, Get, HttpException, Post, Query } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Get,
+  HttpException,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { ApiTags } from '@nestjs/swagger';
 
@@ -93,9 +100,7 @@ export class AdminController {
   }
 
   @Post('accept-upgrade-account')
-  viewListReject(
-    @Query('user_id') user_id: string,
-  ) {
+  viewListReject(@Query('user_id') user_id: string) {
     try {
       return this.adminService.acceptedAccountUpgrade(Number(user_id));
     } catch (error) {
@@ -106,13 +111,23 @@ export class AdminController {
     }
   }
 
-  @Post('reject-upgrade-account')
-  rejectUpgradeAccount(
-    @Query('user_id') user_id: string,
-  ) {
+  @Delete('delete-reject-account')
+  deleteRejectAccount(@Query('user_id') user_id: string) {
     try {
-      return this.adminService.rejctedAccountUpgrade(Number(user_id))
-     } catch (error) {
+      return this.adminService.deleteRejectAccount(Number(user_id));
+    } catch (error) {
+      throw new HttpException(
+        `Lỗi BE {admin - deleteRejectAccount} ${error}`,
+        500,
+      );
+    }
+  }
+
+  @Post('reject-upgrade-account')
+  rejectUpgradeAccount(@Query('user_id') user_id: string) {
+    try {
+      return this.adminService.rejctedAccountUpgrade(Number(user_id));
+    } catch (error) {
       throw new HttpException(
         `Lỗi BE {deleteYourPost - getPostFromUser} ${error}`,
         500,

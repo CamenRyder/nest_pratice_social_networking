@@ -61,6 +61,61 @@ export class AdminService {
     }
   }
 
+  async deleteRejectAccount(user_id: number) {
+    try {
+      var currentTime = new Date();
+      const data = await this.prismaService.browsingAccount.findFirst({
+        where: {
+          user_id: user_id,
+          account_state_id:3 ,  
+        },
+        
+      });
+
+      if (data) { 
+          const  isDelete =  await this.prismaService.browsingAccount.delete({
+            where: {
+              browsing_account_id: data.browsing_account_id ,   
+            }
+          })
+          if(isDelete) {
+            return {
+              message: 'deleted successful',
+              statusCode: 200,
+              createAt: currentTime.toLocaleString('en-US', {
+                timeZone: 'Asia/Ho_Chi_Minh',
+                hour12: false,
+              }),
+            
+            }
+          }else {
+            return {
+              message: 'Something went wrong!',
+              statusCode: 203,
+              createAt: currentTime.toLocaleString('en-US', {
+                timeZone: 'Asia/Ho_Chi_Minh',
+                hour12: false,
+              }),
+            
+            }
+          }
+      }
+
+      return {
+        message: 'No data found ',
+        statusCode: 200,
+        createAt: currentTime.toLocaleString('en-US', {
+          timeZone: 'Asia/Ho_Chi_Minh',
+          hour12: false,
+        }),
+      };
+    } catch (err) {
+      return {
+        message: err,
+      };
+    }
+  }
+
   async acceptedAccountUpgrade(user_id: number) {
     try {
       var currentTime = new Date();
