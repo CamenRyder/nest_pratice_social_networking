@@ -67,38 +67,35 @@ export class AdminService {
       const data = await this.prismaService.browsingAccount.findFirst({
         where: {
           user_id: user_id,
-          account_state_id:3 ,  
+          account_state_id: 3,
         },
-        
       });
 
-      if (data) { 
-          const  isDelete =  await this.prismaService.browsingAccount.delete({
-            where: {
-              browsing_account_id: data.browsing_account_id ,   
-            }
-          })
-          if(isDelete) {
-            return {
-              message: 'deleted successful',
-              statusCode: 200,
-              createAt: currentTime.toLocaleString('en-US', {
-                timeZone: 'Asia/Ho_Chi_Minh',
-                hour12: false,
-              }),
-            
-            }
-          }else {
-            return {
-              message: 'Something went wrong!',
-              statusCode: 203,
-              createAt: currentTime.toLocaleString('en-US', {
-                timeZone: 'Asia/Ho_Chi_Minh',
-                hour12: false,
-              }),
-            
-            }
-          }
+      if (data) {
+        const isDelete = await this.prismaService.browsingAccount.delete({
+          where: {
+            browsing_account_id: data.browsing_account_id,
+          },
+        });
+        if (isDelete) {
+          return {
+            message: 'deleted successful',
+            statusCode: 200,
+            createAt: currentTime.toLocaleString('en-US', {
+              timeZone: 'Asia/Ho_Chi_Minh',
+              hour12: false,
+            }),
+          };
+        } else {
+          return {
+            message: 'Something went wrong!',
+            statusCode: 203,
+            createAt: currentTime.toLocaleString('en-US', {
+              timeZone: 'Asia/Ho_Chi_Minh',
+              hour12: false,
+            }),
+          };
+        }
       }
 
       return {
@@ -223,15 +220,20 @@ export class AdminService {
           dateReported: 'desc',
         },
         include: {
+          Post: {
+            include: {
+              PostImage: true,
+            },
+          },
           User: {
             select: {
               fullname: true,
               url_avatar: true,
-              user_id: true,
             },
           },
         },
       });
+
 
       return {
         message: 'Update successful',
