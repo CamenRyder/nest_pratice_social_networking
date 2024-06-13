@@ -47,12 +47,12 @@ export class AdminService {
 
         await this.prismaService.user.update({
           where: {
-            user_id: user_id 
+            user_id: user_id,
           },
           data: {
-            is_pending: 0   
-          }
-        })
+            is_pending: 0,
+          },
+        });
       }
       return {
         message: 'Rejected successful',
@@ -164,12 +164,12 @@ export class AdminService {
 
         await this.prismaService.user.update({
           where: {
-            user_id: user_id 
+            user_id: user_id,
           },
           data: {
-            is_pending: 0   
-          }
-        })
+            is_pending: 0,
+          },
+        });
       }
       return {
         message: 'Rejected successful',
@@ -191,6 +191,7 @@ export class AdminService {
     try {
       var currentTime = new Date();
       const offset = (page - 1) * 10;
+      const total = await this.prismaService.browsingAccount.findMany();
       const data = await this.prismaService.browsingAccount.findMany({
         take: pageSize,
         skip: offset,
@@ -218,7 +219,10 @@ export class AdminService {
           timeZone: 'Asia/Ho_Chi_Minh',
           hour12: false,
         }),
-        data: data,
+        data: {
+          data: data,
+          total: total.length,
+        },
       };
     } catch (err) {
       return {
@@ -231,6 +235,7 @@ export class AdminService {
     try {
       var currentTime = new Date();
       const offset = (page - 1) * 10;
+      const total = await this.prismaService.report.findMany();
       const data = await this.prismaService.report.findMany({
         take: pageSize,
         skip: offset,
@@ -245,7 +250,7 @@ export class AdminService {
                 select: {
                   fullname: true,
                   url_avatar: true,
-                  user_id: true
+                  user_id: true,
                 },
               },
             },
@@ -259,15 +264,17 @@ export class AdminService {
         },
       });
 
-
       return {
-        message: 'Update successful',
+        message: 'Quer successful',
         statusCode: 200,
         createAt: currentTime.toLocaleString('en-US', {
           timeZone: 'Asia/Ho_Chi_Minh',
           hour12: false,
         }),
-        data: data,
+        data: {
+          data: data,
+          total: total.length,
+        },
       };
     } catch (err) {
       return {
@@ -319,6 +326,7 @@ export class AdminService {
     try {
       var currentTime = new Date();
       const offset = (page - 1) * 10;
+      const total  = await this.prismaService.browsingAccount.findMany();
       const data = await this.prismaService.browsingAccount.findMany({
         take: pageSize,
         skip: offset,
@@ -346,7 +354,10 @@ export class AdminService {
           timeZone: 'Asia/Ho_Chi_Minh',
           hour12: false,
         }),
+      data: {
         data: data,
+        total: total.length,
+      }
       };
     } catch (err) {
       return {
@@ -354,7 +365,6 @@ export class AdminService {
       };
     }
   }
-
 
   async viewListBanReport(page: number, pageSize: number) {
     try {

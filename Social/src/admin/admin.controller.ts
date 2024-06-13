@@ -32,23 +32,23 @@ export class AdminController {
     }
   }
 
-  @Get('view-list-report-waiting-to-accept')
-  viewListReportWaitingToAccept(
-    @Query('pageSize') pageSize: string,
-    @Query('page') page: string,
-  ) {
-    try {
-      return this.adminService.viewListReportWaitingToAccept(
-        Number(page),
-        Number(pageSize),
-      );
-    } catch (error) {
-      throw new HttpException(
-        `Lỗi BE {deleteYourPost - getPostFromUser} ${error}`,
-        500,
-      );
-    }
-  }
+  // @Get('view-list-report-waiting-to-accept')
+  // viewListReportWaitingToAccept(
+  //   @Query('pageSize') pageSize: string,
+  //   @Query('page') page: string,
+  // ) {
+  //   try {
+  //     return this.adminService.viewListReportWaitingToAccept(
+  //       Number(page),
+  //       Number(pageSize),
+  //     );
+  //   } catch (error) {
+  //     throw new HttpException(
+  //       `Lỗi BE {view-list-report-waiting-to-accept - getPostFromUser} ${error}`,
+  //       500,
+  //     );
+  //   }
+  // }
 
   @Get('view-list-reject-upgrade-to-restaurant')
   viewListRejectToRestaurant(
@@ -73,7 +73,7 @@ export class AdminController {
   viewListBanReport(   @Query('pageSize') pageSize: string,
   @Query('page') page: string,) {
     try {
-      return this.adminService.viewListBanReport( Number(page),
+      return this.adminService.viewListReportWaitingToAccept( Number(page),
       Number(pageSize),)
     } catch (error) {
       throw new HttpException(
