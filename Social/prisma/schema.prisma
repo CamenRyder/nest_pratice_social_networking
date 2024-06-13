@@ -181,6 +181,7 @@ model User {
   mode_level_id                                  Int?
   url_background_profile                         String?           @default("http://camenryder.xyz/public/img/background_profile_default.jpg") @db.VarChar(400)
   date_create_account                            String?           @db.VarChar(400)
+  is_pending                                     Int?              @default(0)
   BrowsingAccount                                BrowsingAccount[]
   Follower_Follower_following_user_idToUser      Follower[]        @relation("Follower_following_user_idToUser")
   Follower_Follower_user_idToUser                Follower[]        @relation("Follower_user_idToUser")
