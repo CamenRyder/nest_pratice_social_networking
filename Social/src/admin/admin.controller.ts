@@ -56,10 +56,11 @@ export class AdminController {
     @Query('page') page: string,
   ) {
     try {
-      return this.adminService.viewListRejectToRestaurant(
-        Number(page),
-        Number(pageSize),
-      );
+      return "pending next version"
+      // return this.adminService.viewListRejectToRestaurant(
+      //   Number(page),
+      //   Number(pageSize),
+      // );
     } catch (error) {
       throw new HttpException(
         `Lỗi BE {deleteYourPost - getPostFromUser} ${error}`,
@@ -69,10 +70,11 @@ export class AdminController {
   }
 
   @Get('view-list-ban-report-post')
-  asdhakjhk() {
+  viewListBanReport(   @Query('pageSize') pageSize: string,
+  @Query('page') page: string,) {
     try {
-      // return this.adminService.getCommentFromPost(data);
-      return 'Tối t4 có';
+      return this.adminService.viewListBanReport( Number(page),
+      Number(pageSize),)
     } catch (error) {
       throw new HttpException(
         `Lỗi BE {deleteYourPost - getPostFromUser} ${error}`,

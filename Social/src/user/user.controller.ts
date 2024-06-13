@@ -71,9 +71,10 @@ export class UserController {
 
   @ApiBearerAuth()
   @UseGuards(MyJwtGuard)
-  @Post('upgrade-account/:user_id')
-  upgradeAccount(@Param('user_id') id: string) {
-    return this.userService.upgradeAccount(id);
+  @Post('upgrade-account')
+  upgradeAccount(@Req() req: Request) {
+    const data = req['user'];
+    return this.userService.upgradeAccount(data['user_id']);
   }
 
   // @ApiBearerAuth()

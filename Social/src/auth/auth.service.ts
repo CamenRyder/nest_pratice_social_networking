@@ -80,6 +80,7 @@ export class AuthService {
         url_background_profile: true,
         phone: true,
         role_id:true,
+        is_pending: true
       },
     });
     if (!user) {

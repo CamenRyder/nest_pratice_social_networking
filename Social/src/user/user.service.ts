@@ -237,10 +237,16 @@ export class UserService {
           user_id: Number(id),
         },
       });
-      console.log('Adsuuu ?');
-      
       console.log(isExist);
-      
+
+       await this.prismaService.user.update({
+        where: {
+          user_id: Number(id)
+        } ,  
+        data: {
+          is_pending: 1 
+        }
+      })
       if (isExist==null) {
         const createdQueueAccount =
           await this.prismaService.browsingAccount.create({
@@ -263,16 +269,27 @@ export class UserService {
           }),
           createdQueueAccount,
         };
-      } else
-        return {
-          message:
-            'Existed request in dashboard or upgraded restaurant successful',
-          statusCode: 201,
-          createAt: currentTime.toLocaleString('en-US', {
-            timeZone: 'Asia/Ho_Chi_Minh',
-            hour12: false,
-          }),
-        };
+      } else 
+        {
+          const  updateQueueAccount =  await this.prismaService.browsingAccount.update({
+            where: {
+              browsing_account_id: isExist.browsing_account_id , 
+              user_id: Number(id)
+            } , 
+            data: {
+              account_state_id: 1 
+            }
+          })
+          return {
+            message: 'Waiting system accept your request',
+            statusCode: 200,
+            createAt: currentTime.toLocaleString('en-US', {
+              timeZone: 'Asia/Ho_Chi_Minh',
+              hour12: false,
+            }),
+            updateQueueAccount,
+          };
+        }
     } catch (err) {
       return {
         messageError: err,
@@ -310,6 +327,7 @@ export class UserService {
           country: true,
           gender: true,
           language: true,
+          is_pending: true,
         },
       });
 

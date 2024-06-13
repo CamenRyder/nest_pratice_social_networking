@@ -44,6 +44,15 @@ export class AdminService {
             date: Date.now().toString(),
           },
         });
+
+        await this.prismaService.user.update({
+          where: {
+            user_id: user_id 
+          },
+          data: {
+            is_pending: 0   
+          }
+        })
       }
       return {
         message: 'Rejected successful',
@@ -152,6 +161,15 @@ export class AdminService {
             date: Date.now().toString(),
           },
         });
+
+        await this.prismaService.user.update({
+          where: {
+            user_id: user_id 
+          },
+          data: {
+            is_pending: 0   
+          }
+        })
       }
       return {
         message: 'Rejected successful',
@@ -223,6 +241,13 @@ export class AdminService {
           Post: {
             include: {
               PostImage: true,
+              User: {
+                select: {
+                  fullname: true,
+                  url_avatar: true,
+                  user_id: true
+                },
+              },
             },
           },
           User: {
@@ -291,6 +316,47 @@ export class AdminService {
   }
 
   async viewListAcceptedUpgradeAccount(page: number, pageSize: number) {
+    try {
+      var currentTime = new Date();
+      const offset = (page - 1) * 10;
+      const data = await this.prismaService.browsingAccount.findMany({
+        take: pageSize,
+        skip: offset,
+        orderBy: {
+          create_at: 'desc',
+        },
+        where: {
+          account_state_id: 2,
+        },
+        include: {
+          User: {
+            select: {
+              fullname: true,
+              url_avatar: true,
+              user_id: true,
+            },
+          },
+        },
+      });
+
+      return {
+        message: 'list accepted account become upgrade successful',
+        statusCode: 200,
+        createAt: currentTime.toLocaleString('en-US', {
+          timeZone: 'Asia/Ho_Chi_Minh',
+          hour12: false,
+        }),
+        data: data,
+      };
+    } catch (err) {
+      return {
+        message: err,
+      };
+    }
+  }
+
+
+  async viewListBanReport(page: number, pageSize: number) {
     try {
       var currentTime = new Date();
       const offset = (page - 1) * 10;
