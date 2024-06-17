@@ -147,18 +147,21 @@ model ReactPost {
 }
 
 model Report {
-  report_id    Int     @id @default(autoincrement())
-  user_id      Int?
-  post_id      Int?
-  issue_id     Int?
-  dateReported String  @db.VarChar(200)
-  User         User?   @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "Report_ibfk_1")
-  Post         Post?   @relation(fields: [post_id], references: [post_id], onDelete: NoAction, onUpdate: NoAction, map: "Report_ibfk_2")
-  Issues       Issues? @relation(fields: [issue_id], references: [issue_id], onDelete: NoAction, onUpdate: NoAction, map: "Report_ibfk_3")
+  report_id              Int                @id @default(autoincrement())
+  user_id                Int?
+  post_id                Int?
+  issue_id               Int?
+  dateReported           String             @db.VarChar(200)
+  post_browsing_state_id Int?               @default(1)
+  User                   User?              @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "Report_ibfk_1")
+  Post                   Post?              @relation(fields: [post_id], references: [post_id], onDelete: NoAction, onUpdate: NoAction, map: "Report_ibfk_2")
+  Issues                 Issues?            @relation(fields: [issue_id], references: [issue_id], onDelete: NoAction, onUpdate: NoAction, map: "Report_ibfk_3")
+  PostBrowsingState      PostBrowsingState? @relation(fields: [post_browsing_state_id], references: [post_browsing_state_id], onDelete: NoAction, onUpdate: NoAction, map: "Report_ibfk_4")
 
   @@index([issue_id], map: "issue_id")
   @@index([post_id], map: "post_id")
   @@index([user_id], map: "user_id")
+  @@index([post_browsing_state_id], map: "post_browsing_state_id")
 }
 
 model Role {
@@ -229,4 +232,10 @@ model Notification_type {
   noti_type_id   Int            @id @default(autoincrement())
   noti_type_name String         @db.VarChar(200)
   Notification   Notification[]
+}
+
+model PostBrowsingState {
+  post_browsing_state_id   Int      @id @default(autoincrement())
+  post_browsing_state_name String   @db.VarChar(200)
+  Report                   Report[]
 }

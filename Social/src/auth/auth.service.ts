@@ -82,7 +82,7 @@ export class AuthService {
         role_id:true,
         is_pending: true
       },
-    });
+    });    
     if (!user) {
       throw new ForbiddenException('User not found');
     } else {
@@ -96,6 +96,7 @@ export class AuthService {
         delete user.hash_password;
       }
     }
+    
     const token = await this.signJwtToken(user.user_id, user.email);
     return {
       message: 'login success',
