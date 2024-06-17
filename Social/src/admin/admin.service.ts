@@ -374,14 +374,11 @@ export class AdminService {
     try {
       var currentTime = new Date();
       const offset = (page - 1) * 10;
-      const data = await this.prismaService.browsingAccount.findMany({
+      const data = await this.prismaService.report.findMany({
         take: pageSize,
-        skip: offset,
-        orderBy: {
-          create_at: 'desc',
-        },
+        skip: offset, 
         where: {
-          account_state_id: 2,
+          post_browsing_state_id: 1,
         },
         include: {
           User: {
