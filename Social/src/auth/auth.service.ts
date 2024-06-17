@@ -44,7 +44,7 @@ export class AuthService {
           Follower_Follower_user_idToUser: true,
         },
       });
-      
+
       await this.prismaService.notification.create({
         data: {
           user_id: user.user_id,
@@ -79,10 +79,28 @@ export class AuthService {
         url_avatar: true,
         url_background_profile: true,
         phone: true,
-        role_id:true,
-        is_pending: true
+        role_id: true,
+        is_pending: true,
       },
-    });    
+    });
+
+    // const list = await this.prismaService.browsingAccount.findMany({
+    //   where: {
+    //     account_state_id: 2,
+    //   },
+    // });
+
+    // list.forEach(async (e) => {
+    //   await this.prismaService.user.update({
+    //     where: {
+    //       user_id: e.user_id,
+    //     },
+    //     data: {
+    //       role_id: 3,
+    //     },
+    //   });
+    // });
+
     if (!user) {
       throw new ForbiddenException('User not found');
     } else {
@@ -96,7 +114,7 @@ export class AuthService {
         delete user.hash_password;
       }
     }
-    
+
     const token = await this.signJwtToken(user.user_id, user.email);
     return {
       message: 'login success',

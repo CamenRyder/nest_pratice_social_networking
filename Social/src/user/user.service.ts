@@ -45,6 +45,7 @@ export class UserService {
           country: true,
           gender: true,
           language: true,
+          role_id:true
         },
       });
 
@@ -328,6 +329,7 @@ export class UserService {
           gender: true,
           language: true,
           is_pending: true,
+          role_id:true 
         },
       });
 

@@ -40,7 +40,7 @@ export class AdminService {
             // post_id: data.post_top_id,
             Noti_type_id: 5,
             title: `Thông báo hệ thống`,
-            description: `Chúc mừng tài khoản ${data.User.fullname} đã bị hệ thống từ chối nâng cấp.`,
+            description: `Tài khoản ${data.User.fullname} đã bị hệ thống từ chối nâng cấp.`,
             date: Date.now().toString(),
           },
         });
@@ -167,6 +167,7 @@ export class AdminService {
             user_id: user_id,
           },
           data: {
+            role_id: 3 ,  
             is_pending: 0,
           },
         });
