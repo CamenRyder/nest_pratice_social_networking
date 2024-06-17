@@ -191,7 +191,11 @@ export class AdminService {
     try {
       var currentTime = new Date();
       const offset = (page - 1) * 10;
-      const total = await this.prismaService.browsingAccount.findMany();
+      const total = await this.prismaService.browsingAccount.findMany({
+        where: {
+          account_state_id: 1,
+        },
+      });
       const data = await this.prismaService.browsingAccount.findMany({
         take: pageSize,
         skip: offset,
@@ -326,7 +330,7 @@ export class AdminService {
     try {
       var currentTime = new Date();
       const offset = (page - 1) * 10;
-      const total  = await this.prismaService.browsingAccount.findMany();
+      const total = await this.prismaService.browsingAccount.findMany();
       const data = await this.prismaService.browsingAccount.findMany({
         take: pageSize,
         skip: offset,
@@ -354,10 +358,10 @@ export class AdminService {
           timeZone: 'Asia/Ho_Chi_Minh',
           hour12: false,
         }),
-      data: {
-        data: data,
-        total: total.length,
-      }
+        data: {
+          data: data,
+          total: total.length,
+        },
       };
     } catch (err) {
       return {
