@@ -11,6 +11,7 @@ import { TrackingModule } from './tracking/tracking.module';
 import { NotificationModule } from './notification/notification.module';
 import { AdminModule } from './admin/admin.module';
 import { IssueReportModule } from './issue_report/issue_report.module';
+import { PostRestauransModule } from './post-restaurans/post-restaurans.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { IssueReportModule } from './issue_report/issue_report.module';
     NotificationModule,
     AdminModule,
     IssueReportModule,
+    PostRestauransModule,
   ],
 })
 export class AppModule {}

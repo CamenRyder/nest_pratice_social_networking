@@ -239,7 +239,7 @@ export class AdminService {
   async viewListReportWaitingToAccept(page: number, pageSize: number) {
     try {
       var currentTime = new Date();
-      const offset = (page - 1) * 10;
+      const offset = (page - 1) * pageSize;
       const total = await this.prismaService.report.findMany();
       const data = await this.prismaService.report.findMany({
         take: pageSize,
